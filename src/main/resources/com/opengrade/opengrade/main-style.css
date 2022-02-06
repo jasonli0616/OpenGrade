@@ -1,0 +1,22 @@
+#body {
+    -fx-background-color: #131313;
+}
+
+#title {
+    -fx-font-size: 30px;
+    -fx-text-fill: white;
+}
+
+.button {
+    -fx-background-color: #303030;
+    -fx-text-fill: white;
+}
+
+.button:hover {
+    -fx-background-color: #404040;
+    -fx-cursor: hand;
+}
+
+.button:pressed {
+    -fx-background-color: #033a6e;
+}
