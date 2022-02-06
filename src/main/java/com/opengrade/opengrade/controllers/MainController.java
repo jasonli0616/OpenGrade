@@ -1,4 +1,4 @@
-package com.opengrade.opengrade;
+package com.opengrade.opengrade.controllers;
 
 import javafx.fxml.FXML;
 

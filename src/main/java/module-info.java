@@ -6,4 +6,6 @@ module com.opengrade.opengrade {
 
     opens com.opengrade.opengrade to javafx.fxml;
     exports com.opengrade.opengrade;
+    exports com.opengrade.opengrade.controllers;
+    opens com.opengrade.opengrade.controllers to javafx.fxml;
 }
