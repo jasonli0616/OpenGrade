@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import java.net.URL?>
+<VBox alignment="TOP_CENTER" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.opengrade.opengrade.controllers.CreateClassController"
+      id="body">
+    <stylesheets>
+        <URL value="@../css/main.css"/>
+        <URL value="@../css/create-class.css"/>
+    </stylesheets>
+
+    <Label styleClass="title" text="Create a new class"/>
+
+    <Region prefHeight="30"/>
+
+    <HBox alignment="CENTER">
+        <Label styleClass="p" text="Class name:"/>
+        <Region prefWidth="10"/>
+        <TextField fx:id="classNameInput"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <Label styleClass="p" text="Amount of students:"/>
+        <Region prefWidth="10"/>
+        <TextField fx:id="amountOfStudentsInput" onKeyTyped="#validateAmountOfStudentsNumberInput"/>
+    </HBox>
+
+    <Button styleClass="button" text="Create class" onAction="#handleCreateClassButton"/>
+
+</VBox>
