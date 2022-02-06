@@ -4,11 +4,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
 
-import java.sql.Connection;
 import java.io.IOException;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class Main extends Application {
     /**
@@ -25,27 +24,10 @@ public class Main extends Application {
         stage.show();
     }
 
-    public static void connectToDatabase() {
-        Connection conn = null;
-
-        try {
-            String url =  "jdbc:sqlite:site.db";
-
-            conn = DriverManager.getConnection(url);
-        } catch (SQLException exception) {
-            System.out.println(exception.getMessage());
-        } finally {
-            try {
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException exception) {
-                System.out.println(exception.getMessage());
-            }
-        }
-    }
-
     public static void main(String[] args) {
-        connectToDatabase();
+
         launch();
+
+        Database.connect().close();
     }
 }

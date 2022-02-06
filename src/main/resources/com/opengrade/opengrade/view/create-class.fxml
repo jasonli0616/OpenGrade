@@ -26,12 +26,15 @@
         <TextField fx:id="classNameInput"/>
     </HBox>
 
-    <HBox alignment="CENTER">
-        <Label styleClass="p" text="Amount of students:"/>
-        <Region prefWidth="10"/>
-        <TextField fx:id="amountOfStudentsInput" onKeyTyped="#validateAmountOfStudentsNumberInput"/>
-    </HBox>
+    <Region prefHeight="10"/>
+
+    <Button styleClass="button" text="Add student" onAction="#handleAddStudentButton"/>
+
+    <Region prefHeight="30"/>
 
     <Button styleClass="button" text="Create class" onAction="#handleCreateClassButton"/>
+
+    <Region prefHeight="30"/>
+    <VBox fx:id="showStudents" alignment="CENTER" />
 
 </VBox>
