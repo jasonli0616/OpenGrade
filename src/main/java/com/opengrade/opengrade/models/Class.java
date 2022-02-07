@@ -26,9 +26,23 @@ public class Class {
         this.students = students;
     }
 
-    public void addStudent(Student student) {
-        this.students.add(student);
+    /**
+     * Add a new student to the class.
+     *
+     * @param newStudent the new student to add
+     * @throws IllegalArgumentException if a student with the same name already exists
+     */
+    public void addStudent(Student newStudent) throws IllegalArgumentException {
+        for (Student existingStudent : students) {
+            if (existingStudent.fullName.equals(newStudent.fullName))
+                throw new IllegalArgumentException("A student with the same name already exists in the class.");
+        }
+        this.students.add(newStudent);
         Database.insertClass(this);
+    }
+
+    public void editStudentName(Student student, String newName) {
+        student.fullName = newName;
     }
 
     public void removeStudent(Student student) {

@@ -17,8 +17,13 @@
     </stylesheets>
 
     <left>
-        <VBox fx:id="studentsList" id="studentsList">
+        <VBox fx:id="studentsSection" id="studentsSection">
             <Label text="Students" styleClass="title"/>
+
+            <ListView fx:id="studentsList" id="studentsList"/>
+
+            <Button onAction="#createStudent" text="Create new student"/>
+            <Button onAction="#editStudentName" text="Edit selected student's name"/>
         </VBox>
     </left>
 

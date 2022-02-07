@@ -4,6 +4,7 @@ import com.opengrade.opengrade.Database;
 import com.opengrade.opengrade.models.Class;
 import com.opengrade.opengrade.models.Student;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -38,10 +39,16 @@ public class CreateClassController {
         // If name is given, create student and add to ArrayList
         Optional<String> result = askStudentName.showAndWait();
         if (result.isPresent()) {
-            students.add(new Student(result.get()));
-            Label l = new Label(result.get());
-            l.getStyleClass().add("p");
-            showStudents.getChildren().add(l);
+            try {
+                students.add(new Student(result.get()));
+                Label l = new Label(result.get());
+                l.getStyleClass().add("p");
+                showStudents.getChildren().add(l);
+            } catch (IllegalArgumentException exception) {
+                // If student already exists
+                Alert alert = new Alert(Alert.AlertType.ERROR, exception.getMessage());
+                alert.showAndWait();
+            }
         }
     }
 
