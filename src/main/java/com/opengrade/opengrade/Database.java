@@ -36,6 +36,41 @@ public class Database {
     }
 
     /**
+     * Search and returns whether a class exists in the database (by name).
+     *
+     * @param className the name of the class
+     * @return whether the class exists
+     */
+    public static boolean classExists(String className) {
+        ArrayList<Class> classes = getAllClasses();
+
+        for (Class c : classes) {
+            if (c.className.equals(className))
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Search and return a class in the database.
+     * This should only be called when you know 100% that this class exists. (see classExists())
+     *
+     * @param className the name of the class
+     * @return the class itself
+     */
+    public static Class findClass(String className) {
+        ArrayList<Class> classes = getAllClasses();
+
+        for (Class c : classes) {
+            if (c.className.equals(className)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Query the database for all classes.
      *
      * @return ArrayList of all classes

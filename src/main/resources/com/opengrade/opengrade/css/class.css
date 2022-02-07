@@ -1,0 +1,6 @@
+#studentsList {
+    -fx-spacing: 30;
+    -fx-border-color: white;
+    -fx-border-radius: 10px;
+    -fx-padding: 30;
+}

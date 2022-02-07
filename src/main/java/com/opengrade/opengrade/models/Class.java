@@ -1,5 +1,13 @@
 package com.opengrade.opengrade.models;
 
+import com.opengrade.opengrade.Database;
+import com.opengrade.opengrade.Main;
+import com.opengrade.opengrade.controllers.ClassController;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +26,14 @@ public class Class {
         this.students = students;
     }
 
-    public void addStudent(Student s) {
-        this.students.add(s);
+    public void addStudent(Student student) {
+        this.students.add(student);
+        Database.insertClass(this);
+    }
+
+    public void removeStudent(Student student) {
+        this.students.remove(student);
+        Database.insertClass(this);
     }
 
     /**
@@ -62,5 +76,22 @@ public class Class {
         }
 
         return new Class(className, students);
+    }
+
+    /**
+     * Open a class in the window.
+     *
+     * @param c the class to open
+     * @param stage the stage to open the class in
+     * @throws IOException
+     */
+    public static void openClassGUI(Class c, Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("view/class.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        ClassController controller = fxmlLoader.getController();
+        controller.setClass(c);
+        stage.setTitle("OpenGrade - " + c.className);
+        stage.setScene(scene);
+        stage.setMaximized(true);
     }
 }
