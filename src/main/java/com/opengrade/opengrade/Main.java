@@ -25,9 +25,9 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-
         launch();
 
+        // Close database on app close
         Database.connect().close();
     }
 }

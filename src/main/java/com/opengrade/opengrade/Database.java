@@ -12,20 +12,21 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 public class Database {
+
+    /**
+     * Connects (and create if not exists) to and returns the database.
+     *
+     * @return the database itself
+     */
     public static DB connect() {
         return DBMaker.fileDB("site.db").make();
     }
 
-    public static Class selectClass(String className) {
-        DB db = connect();
-        ConcurrentMap<String, HashMap<String, HashMap<String, Float>>> map = (ConcurrentMap<String, HashMap<String, HashMap<String, Float>>>) db.hashMap("map").createOrOpen();
-        HashMap<String, HashMap<String, Float>> classMap = map.get(className);
-
-        db.close();
-
-        return Class.mapToClass(classMap, className);
-    }
-
+    /**
+     * Inserts a class into the database.
+     *
+     * @param c the class to insert
+     */
     public static void insertClass(Class c) {
         DB db = connect();
         ConcurrentMap<String, HashMap<String, HashMap<String, Float>>> map = (ConcurrentMap<String, HashMap<String, HashMap<String, Float>>>) db.hashMap("map").createOrOpen();
@@ -34,6 +35,11 @@ public class Database {
         db.close();
     }
 
+    /**
+     * Query the database for all classes.
+     *
+     * @return ArrayList of all classes
+     */
     public static ArrayList<Class> getAllClasses() {
         DB db = connect();
         ConcurrentMap<String, HashMap<String, HashMap<String, Float>>> map = (ConcurrentMap<String, HashMap<String, HashMap<String, Float>>>) db.hashMap("map").createOrOpen();

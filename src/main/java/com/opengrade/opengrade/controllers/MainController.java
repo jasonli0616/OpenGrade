@@ -17,7 +17,7 @@ public class MainController {
     private Button openExistingClassButton;
 
     /**
-     * Change to create class window on button click
+     * Change to create class window on button click.
      */
     @FXML
     protected void handleCreateNewClassButton() throws IOException {
@@ -29,7 +29,7 @@ public class MainController {
     }
 
     /**
-     * Change to open existing class window on button click
+     * Change to open existing class window on button click.
      */
     @FXML
     protected void handleOpenExistingClassButton() throws IOException {
