@@ -4,6 +4,7 @@ import com.opengrade.opengrade.Main;
 import com.opengrade.opengrade.models.Class;
 import com.opengrade.opengrade.models.Student;
 import javafx.collections.ObservableList;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -14,6 +15,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 public class ClassController {
@@ -114,7 +116,27 @@ public class ClassController {
     }
 
     @FXML
-    protected void deleteClass() throws IOException {
+    protected void handleCreateAssignmentButton() {
+        HashMap<Student, Float> grades = new HashMap<Student, Float>();
+        for (Student student : this.c.students) {
+            TextInputDialog askStudentGrade = new TextInputDialog();
+            askStudentGrade.setTitle("Create assignment");
+            askStudentGrade.setHeaderText("Create assignment");
+            askStudentGrade.setContentText(String.format("What is %s's grade?", student.fullName));
+
+            Optional<String> gradeResult = askStudentGrade.showAndWait();
+
+            // TODO: Verify is float
+
+            if (gradeResult.isPresent()) {
+                float grade = Float.parseFloat(gradeResult.get());
+                System.out.println(grade);
+            }
+        }
+    }
+
+    @FXML
+    protected void handleDeleteClassButton() throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, String.format("Are you sure you want to to delete %s? This action is non-recoverable.", this.c.className));
         Optional<ButtonType> result = alert.showAndWait();
 

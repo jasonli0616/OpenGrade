@@ -50,6 +50,12 @@ public class Class {
         Database.insertClass(this);
     }
 
+    public void createAssignment(String assignmentName, HashMap<Student, Float> grades) {
+        for (Student student : students) {
+//            student.addAssignment(assignmentName);
+        }
+    }
+
     public void deleteClass() {
         Database.deleteClass(this);
     }

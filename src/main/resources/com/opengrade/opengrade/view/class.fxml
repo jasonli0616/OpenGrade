@@ -38,8 +38,10 @@
             </center>
 
             <right>
-                <Button text="Create assignment"/>
-                <Button text="Delete class" onAction="#deleteClass"/>
+                <HBox spacing="10">
+                    <Button text="Create assignment" onAction="#handleCreateAssignmentButton"/>
+                    <Button text="Delete class" onAction="#handleDeleteClassButton"/>
+                </HBox>
             </right>
         </BorderPane>
     </top>
