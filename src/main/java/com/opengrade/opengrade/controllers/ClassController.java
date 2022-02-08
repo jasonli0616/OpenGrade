@@ -117,22 +117,54 @@ public class ClassController {
 
     @FXML
     protected void handleCreateAssignmentButton() {
+        // Ask assignment name
+        TextInputDialog askAssignmentName = new TextInputDialog();
+        askAssignmentName.setTitle("Create assignment");
+        askAssignmentName.setHeaderText("Create assignment");
+        askAssignmentName.setContentText("What is the assignment name?");
+
+        Optional<String> assignmentNameResult = askAssignmentName.showAndWait();
+
+        if (assignmentNameResult.isEmpty())
+            new Alert(Alert.AlertType.ERROR, "Please enter an assignment name.").showAndWait();
+            this.handleCreateAssignmentButton();
+
+        // Get student grades
         HashMap<Student, Float> grades = new HashMap<Student, Float>();
         for (Student student : this.c.students) {
-            TextInputDialog askStudentGrade = new TextInputDialog();
-            askStudentGrade.setTitle("Create assignment");
-            askStudentGrade.setHeaderText("Create assignment");
-            askStudentGrade.setContentText(String.format("What is %s's grade?", student.fullName));
+            boolean gradeFormatIsIncorrect = true;
 
-            Optional<String> gradeResult = askStudentGrade.showAndWait();
+            // This while loop will enforce an input to be from 0-100.
+            while (gradeFormatIsIncorrect) {
+                TextInputDialog askStudentGrade = new TextInputDialog();
+                askStudentGrade.setTitle("Create assignment");
+                askStudentGrade.setHeaderText("Create assignment");
+                askStudentGrade.setContentText(String.format("What is %s's grade?", student.fullName));
 
-            // TODO: Verify is float
+                Optional<String> gradeResult = askStudentGrade.showAndWait();
 
-            if (gradeResult.isPresent()) {
-                float grade = Float.parseFloat(gradeResult.get());
-                System.out.println(grade);
+                // TODO: Verify is float
+
+                if (gradeResult.isPresent()) {
+                    try {
+                        float grade = Float.parseFloat(gradeResult.get());
+
+                        // Ensure grade inputted is between 0-100
+                        if (!(0f <= grade && grade <= 100f))
+                            throw new NumberFormatException();
+
+                        gradeFormatIsIncorrect = false;
+
+                        grades.put(student, grade);
+
+                    } catch (NumberFormatException exception) {
+                        Alert alert = new Alert(Alert.AlertType.WARNING, "Please enter a number between 0 - 100.");
+                    }
+                }
             }
         }
+
+        this.c.createAssignment(assignmentNameResult.get(), grades);
     }
 
     @FXML
