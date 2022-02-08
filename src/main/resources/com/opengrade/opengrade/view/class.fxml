@@ -27,4 +27,21 @@
         </VBox>
     </left>
 
+    <top>
+        <BorderPane id="titleBar">
+            <left>
+                <Button text="Back" onAction="#handleBackButton"/>
+            </left>
+
+            <center>
+                <Label styleClass="title" fx:id="title"/>
+            </center>
+
+            <right>
+                <Button text="Create assignment"/>
+                <Button text="Delete class" onAction="#deleteClass"/>
+            </right>
+        </BorderPane>
+    </top>
+
 </BorderPane>

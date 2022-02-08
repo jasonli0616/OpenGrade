@@ -50,6 +50,10 @@ public class Class {
         Database.insertClass(this);
     }
 
+    public void deleteClass() {
+        Database.deleteClass(this);
+    }
+
     /**
      * Converts the class to a HashMap.
      * This method is called when inserting the class into the database.
@@ -102,10 +106,10 @@ public class Class {
     public static void openClassGUI(Class c, Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("view/class.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        ClassController controller = fxmlLoader.getController();
-        controller.setClass(c);
         stage.setTitle("OpenGrade - " + c.className);
         stage.setScene(scene);
         stage.setMaximized(true);
+        ClassController controller = fxmlLoader.getController();
+        controller.setClass(c);
     }
 }

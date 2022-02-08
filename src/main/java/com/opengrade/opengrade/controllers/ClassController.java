@@ -1,16 +1,13 @@
 package com.opengrade.opengrade.controllers;
 
-import com.opengrade.opengrade.Database;
+import com.opengrade.opengrade.Main;
 import com.opengrade.opengrade.models.Class;
 import com.opengrade.opengrade.models.Student;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -21,6 +18,9 @@ import java.util.Optional;
 
 public class ClassController {
     private Class c;
+
+    @FXML
+    private Label title;
 
     @FXML
     private VBox studentsSection;
@@ -44,19 +44,19 @@ public class ClassController {
     /**
      * Change the name of a student in the class.
      */
-    public void editStudentName() {
+    @FXML
+    protected void editStudentName() {
         try {
             Student selectedStudent = this.getOneSelectedStudent();
             // Show dialog to ask for new name
             TextInputDialog askStudentName = new TextInputDialog();
-            askStudentName.setTitle("Edit student");
-            askStudentName.setHeaderText("Edit student");
+            askStudentName.setTitle("Edit student: " + selectedStudent.fullName);
+            askStudentName.setHeaderText("Edit student: " + selectedStudent.fullName);
             askStudentName.setContentText("What is the student's new name?");
 
             // If name is given, change name
             Optional<String> result = askStudentName.showAndWait();
             if (result.isPresent()) {
-                assert selectedStudent != null;
                 this.c.editStudentName(selectedStudent, result.get());
                 this.refreshWindow();
             }
@@ -68,7 +68,8 @@ public class ClassController {
     /**
      * Add a new student to the class.
      */
-    public void createStudent() {
+    @FXML
+    protected void createStudent() {
         // Show dialog to ask for name
         TextInputDialog askStudentName = new TextInputDialog();
         askStudentName.setTitle("Create student");
@@ -112,18 +113,61 @@ public class ClassController {
         return null;
     }
 
+    @FXML
+    protected void deleteClass() throws IOException {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, String.format("Are you sure you want to to delete %s? This action is non-recoverable.", this.c.className));
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            this.c.deleteClass();
+            this.handleBackButton();
+        }
+    }
+
+    @FXML
+    protected void handleBackButton() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("view/main.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+        Stage stage = (Stage) studentsSection.getScene().getWindow();
+        stage.setTitle("OpenGrade");
+        stage.setScene(scene);
+        stage.show();
+        stage.centerOnScreen();
+    }
+
     /**
      * Reload the class window.
      */
-    public void refreshWindow() {
+    private void refreshWindow() {
         try {
             Class.openClassGUI(c, (Stage) studentsList.getScene().getWindow());
-        } catch (IOException exception) { exception.printStackTrace(); }
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 
-    public void setClass(Class c) {
+    /**
+     * Tells the window which class this window represents.
+     * Acts as window constructor, first method that runs.
+     * Initiates other things (e.g. shows stuff on screen, handles closing event)
+     *
+     * @param c the class this window represents
+     */
+    public void setClass(Class c) throws IOException {
         this.c = c;
 
+        this.drawWindow();
+    }
+
+    /**
+     * Puts things on the screen.
+     * This will put components on the screen that are variable,
+     * and cannot be hardcoded in the FXML,
+     * such as things that need the class info.
+     */
+    private void drawWindow() {
         this.showStudentsList();
+
+        this.title.setText(c.className);
     }
 }

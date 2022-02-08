@@ -53,6 +53,14 @@ public class Student {
         this.addAssignment(newAssignment, grade);
     }
 
+    public float getAverage() {
+        float grades = 0;
+        for (float grade : assignments.values()) {
+            grades += grade;
+        }
+        return grades / assignments.size();
+    }
+
     @Override
     public String toString() {
         return this.fullName;

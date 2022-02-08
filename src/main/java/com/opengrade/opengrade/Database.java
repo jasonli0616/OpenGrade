@@ -1,12 +1,10 @@
 package com.opengrade.opengrade;
 
 import com.opengrade.opengrade.models.Class;
-import com.opengrade.opengrade.models.Student;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -31,7 +29,13 @@ public class Database {
         DB db = connect();
         ConcurrentMap<String, HashMap<String, HashMap<String, Float>>> map = (ConcurrentMap<String, HashMap<String, HashMap<String, Float>>>) db.hashMap("map").createOrOpen();
         map.put(c.className, c.toMap());
+        db.close();
+    }
 
+    public static void deleteClass(Class c) {
+        DB db = connect();
+        ConcurrentMap<String, HashMap<String, HashMap<String, Float>>> map = (ConcurrentMap<String, HashMap<String, HashMap<String, Float>>>) db.hashMap("map").createOrOpen();
+        map.remove(c.className);
         db.close();
     }
 
@@ -88,8 +92,8 @@ public class Database {
             Class c = Class.mapToClass(classMap, className);
             classes.add(c);
         }
-        db.close();
 
+        db.close();
         return classes;
     }
 }
