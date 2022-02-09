@@ -51,9 +51,47 @@ public class Class {
     }
 
     public void createAssignment(String assignmentName, HashMap<Student, Float> grades) {
-        for (Student student : students) {
-//            student.addAssignment(assignmentName);
+        // For every student
+        for (Map.Entry<Student, Float> entry : grades.entrySet()) {
+            Student student = entry.getKey();
+            float grade = entry.getValue();
+
+            // Find student and add assignment
+            for (Student existingStudent : students) {
+                if (existingStudent.fullName.equals(student.fullName)) {
+                    existingStudent.addAssignment(assignmentName, grade);
+                    break;
+                }
+            }
         }
+    }
+
+    /**
+     * Return all assignments, as well as students' grades.
+     *
+     * @return ArrayList containing HashMaps, containing the assignment name and a HashMap, containing the student and their grade
+     */
+    public HashMap<String, HashMap<Student, Float>> getAllAssignments() {
+        HashMap<String, HashMap<Student, Float>> assignments = new HashMap<String, HashMap<Student, Float>>();
+
+        // Put all students' assignments into HashMap
+        for (Student student : students) {
+            for (Map.Entry<String, Float> entry : student.assignments.entrySet()) {
+                String assignmentName = entry.getKey();
+                float grade = entry.getValue();
+
+                if (assignments.containsKey(assignmentName))
+                    // If assignment is already in HashMap, add student to assignment
+                    assignments.get(assignmentName).put(student, grade);
+                else {
+                    // Else, add new assignment to HashMap
+                    HashMap<Student, Float> studentAssignment = new HashMap<Student, Float>();
+                    studentAssignment.put(student, grade);
+                    assignments.put(assignmentName, studentAssignment);
+                }
+            }
+        }
+        return assignments;
     }
 
     public void deleteClass() {

@@ -125,9 +125,17 @@ public class ClassController {
 
         Optional<String> assignmentNameResult = askAssignmentName.showAndWait();
 
-        if (assignmentNameResult.isEmpty())
+        // Assignment name input is empty
+        if (assignmentNameResult.isEmpty()) {
             new Alert(Alert.AlertType.ERROR, "Please enter an assignment name.").showAndWait();
             this.handleCreateAssignmentButton();
+        }
+
+        // Assignment already exists
+        if (this.c.getAllAssignments().containsKey(assignmentNameResult.get())) {
+            new Alert(Alert.AlertType.ERROR, "An assignment with this name already exists.").showAndWait();
+            this.handleCreateAssignmentButton();
+        }
 
         // Get student grades
         HashMap<Student, Float> grades = new HashMap<Student, Float>();
@@ -143,8 +151,6 @@ public class ClassController {
 
                 Optional<String> gradeResult = askStudentGrade.showAndWait();
 
-                // TODO: Verify is float
-
                 if (gradeResult.isPresent()) {
                     try {
                         float grade = Float.parseFloat(gradeResult.get());
@@ -158,7 +164,8 @@ public class ClassController {
                         grades.put(student, grade);
 
                     } catch (NumberFormatException exception) {
-                        Alert alert = new Alert(Alert.AlertType.WARNING, "Please enter a number between 0 - 100.");
+                        // If inputted grade is not a float between 0-100
+                        new Alert(Alert.AlertType.WARNING, "Please enter a number between 0 - 100.").showAndWait();
                     }
                 }
             }
