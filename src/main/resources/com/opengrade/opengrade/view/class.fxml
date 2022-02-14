@@ -16,17 +16,6 @@
         <URL value="@../css/class.css"/>
     </stylesheets>
 
-    <left>
-        <VBox fx:id="studentsSection" id="studentsSection">
-            <Label text="Students" styleClass="title"/>
-
-            <ListView fx:id="studentsList" id="studentsList"/>
-
-            <Button onAction="#createStudent" text="Create new student"/>
-            <Button onAction="#editStudentName" text="Edit selected student's name"/>
-        </VBox>
-    </left>
-
     <top>
         <BorderPane id="titleBar">
             <left>
@@ -45,5 +34,24 @@
             </right>
         </BorderPane>
     </top>
+
+    <center>
+        <VBox fx:id="studentsSection" id="studentsSection">
+
+            <GridPane>
+                <VBox GridPane.columnIndex="1">
+                    <Label text="Student name" styleClass="p"/>
+                    <ListView fx:id="studentsList" id="studentsList"/>
+                </VBox>
+                <VBox GridPane.columnIndex="2">
+                    <Label text="Average grade" styleClass="p"/>
+                    <ListView fx:id="gradeList" id="studentsList"/>
+                </VBox>
+            </GridPane>
+
+            <Button onAction="#createStudent" text="Create new student"/>
+            <Button onAction="#editStudentName" text="Edit selected student's name"/>
+        </VBox>
+    </center>
 
 </BorderPane>

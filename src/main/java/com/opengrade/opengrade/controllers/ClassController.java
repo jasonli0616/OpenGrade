@@ -30,6 +30,9 @@ public class ClassController {
     @FXML
     private ListView<String> studentsList;
 
+    @FXML
+    private ListView<String> gradeList;
+
     /**
      * Show the list of students.
      */
