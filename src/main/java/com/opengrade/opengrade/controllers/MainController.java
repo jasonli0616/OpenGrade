@@ -43,24 +43,13 @@ public class MainController {
      */
     @FXML
     protected void handleOpenExistingClassButton() throws IOException {
-        // Get all classes
-        ArrayList<Class> classes = Database.getAllClasses();
 
         ChoiceDialog<String> choiceDialog = new ChoiceDialog<String>();
         choiceDialog.setTitle("Select class");
         choiceDialog.setHeaderText("Select class");
         choiceDialog.setContentText("Please select a class:");
 
-        // Put classes into choice dialog
-        for (Class c : classes) {
-            choiceDialog.getItems().add(c.className);
-        }
-
-        // Wait for selection
-        Optional<String> result = choiceDialog.showAndWait();
-        if (result.isPresent()) {
-            Class c = Database.findClass(result.get());
-            Class.openClassGUI(c, (Stage) openExistingClassButton.getScene().getWindow());
-        }
+        // TODO: Search database for classes, and insert to choice dialog
+        // TODO: Handle user selection, and open class page
     }
 }

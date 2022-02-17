@@ -38,7 +38,6 @@ public class Class {
                 throw new IllegalArgumentException("A student with the same name already exists in the class.");
         }
         this.students.add(newStudent);
-        Database.insertClass(this);
     }
 
     public void editStudentName(Student student, String newName) {

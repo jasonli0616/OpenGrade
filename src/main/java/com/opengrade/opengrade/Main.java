@@ -4,10 +4,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class Main extends Application {
     /**
@@ -27,9 +26,9 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        // Create tables (if not exists) on app launch
+        Database.createTables();
 
-        // Close database on app close
-        Database.connect().close();
+        launch();
     }
 }
