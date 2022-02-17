@@ -3,6 +3,8 @@ package com.opengrade.opengrade.models;
 import java.util.HashMap;
 
 public class Student {
+    public int id;
+
     public String fullName;
 
     public HashMap<String, Float> assignments = new HashMap<String, Float>();

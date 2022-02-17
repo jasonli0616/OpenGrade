@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Class {
+    public int id;
+
     public String className;
 
     public ArrayList<Student> students = new ArrayList<Student>();

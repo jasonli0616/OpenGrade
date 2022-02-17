@@ -1,6 +1,7 @@
 package com.opengrade.opengrade;
 
 import com.opengrade.opengrade.models.Class;
+import com.opengrade.opengrade.models.Student;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class Database {
         try {
             conn = DriverManager.getConnection("jdbc:sqlite:site.db");
         } catch (SQLException exception) {
-            System.out.println(exception.getMessage());
+            exception.printStackTrace();
         }
         return conn;
     }
@@ -32,32 +33,32 @@ public class Database {
         String classesTableQuery = "CREATE TABLE IF NOT EXISTS classes ("
                 + "                     id          INTEGER PRIMARY KEY,"
                 + "                     class_name  TEXT NOT NULL"
-                + "                 );";
+                + "                 )";
 
         String studentsTableQuery = "CREATE TABLE IF NOT EXISTS students ("
                 + "                      id          INTEGER PRIMARY KEY,"
-                + "                      class_name  TEXT NOT NULL"
-                + "                  );";
+                + "                      student_name  TEXT NOT NULL"
+                + "                  )";
 
         String associateStudentClassTableQuery = "CREATE TABLE IF NOT EXISTS associate_student_class ("
                 + "                                   student_id  INTEGER NOT NULL,"
                 + "                                   class_id    INTEGER NOT NULL,"
-                + "                                   FOREIGN KEY (student_id) REFERENCES students(id)"
+                + "                                   FOREIGN KEY (student_id) REFERENCES students(id),"
                 + "                                   FOREIGN KEY (class_id) REFERENCES classes(id)"
-                + "                               );";
+                + "                               )";
 
         String assignmentsTableQuery = "CREATE TABLE IF NOT EXISTS assignments ("
                 + "                         id                  INTEGER PRIMARY KEY,"
-                + "                         assignment_name     TEXT NOT NULL"
+                + "                         assignment_name     TEXT NOT NULL,"
                 + "                         knowledge_mark      INTEGER,"
                 + "                         thinking_mark       INTEGER,"
                 + "                         communication_mark  INTEGER,"
                 + "                         application_mark    INTEGER,"
                 + "                         student_id          INTEGER NOT NULL,"
                 + "                         class_id            INTEGER NOT NULL,"
-                + "                         FOREIGN KEY (student_id) REFERENCES students(id)"
+                + "                         FOREIGN KEY (student_id) REFERENCES students(id),"
                 + "                         FOREIGN KEY (class_id) REFERENCES classes(id)"
-                + "                     );";
+                + "                     )";
 
         Connection conn = connect();
 
@@ -69,15 +70,18 @@ public class Database {
             stmt.execute(associateStudentClassTableQuery);
             stmt.execute(assignmentsTableQuery);
         } catch (SQLException exception) {
-            System.out.println(exception.getMessage());
+            exception.printStackTrace();
         }
     }
 
     /**
-     * Search the database for all students
+     * Search the database for all students.
+     *
+     * @return ArrayList of students
      */
-    public static void getAllStudents() {
-        String query = "SELECT * FROM students;";
+    public static ArrayList<Student> getAllStudents() {
+        ArrayList<Student> students = new ArrayList<Student>();
+        String query = "SELECT * FROM students";
 
         Connection conn = connect();
 
@@ -85,22 +89,77 @@ public class Database {
             Statement stmt = conn.createStatement();
             ResultSet result = stmt.executeQuery(query);
 
-            System.out.println(result.toString());
+            while (result.next()) {
+                Student student = new Student(result.getString("student_name"));
+                student.id = result.getInt("id");
+
+                students.add(student);
+            }
+
         } catch (SQLException exception) {
-            System.out.println(exception.getMessage());
+            exception.printStackTrace();
         }
+
+        return students;
+    }
+
+    /**
+     * Inserts a student into the database.
+     *
+     * @param student the student to insert
+     * @return the id of the student in the database
+     */
+    public static int insertStudent(Student student) {
+        String query = "INSERT INTO students (student_name)"
+                + "         VALUES(?)";
+
+        Connection conn = connect();
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, student.fullName);
+
+            pstmt.executeUpdate();
+            return pstmt.getGeneratedKeys().getInt(1);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return 0;
     }
 
     /**
      * Inserts a class into the database.
      *
      * @param c the class to insert
+     * @returns the id of the class in the database
      */
-    public static void insertClass(Class c) {
-//        DB db = connect();
-//        ConcurrentMap<String, HashMap<String, HashMap<String, Float>>> map = (ConcurrentMap<String, HashMap<String, HashMap<String, Float>>>) db.hashMap("map").createOrOpen();
-//        map.put(c.className, c.toMap());
-//        db.close();
+    public static int insertClass(Class c) {
+        String insertClassQuery = "INSERT INTO classes (class_name)"
+                + "         VALUES (?)";
+
+        String associateStudentClassQuery = "INSERT INTO associate_student_class (student_id, class_id)"
+                + "                             VALUES (?,?)";
+
+        Connection conn = connect();
+
+        try {
+            // Insert class
+            PreparedStatement insertClassPstmt = conn.prepareStatement(insertClassQuery);
+            insertClassPstmt.setString(1, c.className);
+            insertClassPstmt.executeUpdate();
+            c.id = insertClassPstmt.getGeneratedKeys().getInt(1);
+
+            // For every student, associate class
+            PreparedStatement associateStudentClassPstmt = conn.prepareStatement(associateStudentClassQuery);
+            for (Student s : c.students) {
+                associateStudentClassPstmt.setInt(1, s.id);
+                associateStudentClassPstmt.setInt(2, c.id);
+                associateStudentClassPstmt.executeUpdate();
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return 0;
     }
 
     public static void deleteClass(Class c) {

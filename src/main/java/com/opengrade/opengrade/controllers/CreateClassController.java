@@ -6,7 +6,6 @@ import com.opengrade.opengrade.models.Student;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ public class CreateClassController {
     @FXML
     private VBox showStudents;
 
-    private ArrayList<Student> students = new ArrayList<Student>();
+    private ArrayList<Student> addedStudents = new ArrayList<Student>();
 
     /**
      * Method called when the "Add student" button is clicked.
@@ -37,7 +36,20 @@ public class CreateClassController {
 
         if (studentTypeChoiceResult.isPresent()) {
             if (studentTypeChoiceResult.get().equals("Select existing student")) {
-                // TODO: Search database for existing students
+                ChoiceDialog<Student> chooseStudentDialog = new ChoiceDialog<Student>();
+                chooseStudentDialog.setTitle("Select a student");
+                chooseStudentDialog.setHeaderText("Select a student");
+                chooseStudentDialog.setContentText("Please select a student:");
+
+                for (Student student : Database.getAllStudents()) {
+                    chooseStudentDialog.getItems().add(student);
+                }
+
+                Optional<Student> chooseStudentResult = chooseStudentDialog.showAndWait();
+
+                if (chooseStudentResult.isPresent()) {
+                    this.addedStudents.add(chooseStudentResult.get());
+                }
 
             } else {
                 // Insert new student to database, and add to class
@@ -51,8 +63,10 @@ public class CreateClassController {
                 // If name is given, create student and add to ArrayList
                 Optional<String> result = askStudentName.showAndWait();
                 if (result.isPresent()) {
-                    // TODO: Add to database
-                    // TODO: Add to class
+                    Student student = new Student(result.get());
+                    student.id = Database.insertStudent(student);
+
+                    this.addedStudents.add(student);
                 }
             }
         }
@@ -68,9 +82,10 @@ public class CreateClassController {
     protected void handleCreateClassButton() throws IOException {
         String className = classNameInput.getText();
         if (className.isBlank()) {
-            // TODO: Create error
+            new Alert(Alert.AlertType.ERROR, "No name chosen for class.").showAndWait();
         } else {
-            // TODO: Insert class to database
+            Class c = new Class(className, addedStudents);
+            Database.insertClass(c);
             // TODO: Open class window
         }
     }
