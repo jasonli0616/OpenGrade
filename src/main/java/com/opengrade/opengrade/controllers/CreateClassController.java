@@ -3,9 +3,12 @@ package com.opengrade.opengrade.controllers;
 import com.opengrade.opengrade.Database;
 import com.opengrade.opengrade.models.Class;
 import com.opengrade.opengrade.models.Student;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +19,7 @@ public class CreateClassController {
     private TextField classNameInput;
 
     @FXML
-    private VBox showStudents;
+    private ListView<Student> addedStudentsList;
 
     private ArrayList<Student> addedStudents = new ArrayList<Student>();
 
@@ -48,7 +51,11 @@ public class CreateClassController {
                 Optional<Student> chooseStudentResult = chooseStudentDialog.showAndWait();
 
                 if (chooseStudentResult.isPresent()) {
-                    this.addedStudents.add(chooseStudentResult.get());
+                    Student chosenStudent = chooseStudentResult.get();
+                    if (this.addedStudents.contains(chosenStudent))
+                        new Alert(Alert.AlertType.ERROR, String.format("Student %s already exists in this class.", chosenStudent)).showAndWait();
+                    else
+                        this.addedStudents.add(chosenStudent);
                 }
 
             } else {
@@ -69,6 +76,26 @@ public class CreateClassController {
                     this.addedStudents.add(student);
                 }
             }
+            this.addedStudentsList.getItems().setAll(this.addedStudents);
+        }
+    }
+
+    /**
+     *
+     */
+    @FXML
+    protected void removeSelectedStudent() {
+        ObservableList<Student> selectedStudents = this.addedStudentsList.getSelectionModel().getSelectedItems();
+        if (selectedStudents.size() != 1) {
+            new Alert(Alert.AlertType.ERROR, "Please select exactly one student.").showAndWait();
+        } else {
+            Student selectedStudent = selectedStudents.get(0);
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION, String.format("Are you sure you want to remove %s from the class?", selectedStudent.fullName));
+            Optional<ButtonType> confirmationResult = confirmation.showAndWait();
+            if (confirmationResult.isPresent() && confirmationResult.get() == ButtonType.OK) {
+                this.addedStudents.remove(selectedStudent);
+                this.addedStudentsList.getItems().setAll(this.addedStudents);
+            }
         }
     }
 
@@ -86,7 +113,8 @@ public class CreateClassController {
         } else {
             Class c = new Class(className, addedStudents);
             Database.insertClass(c);
-            // TODO: Open class window
+
+            Class.openClassGUI(c, (Stage) classNameInput.getScene().getWindow());
         }
     }
 

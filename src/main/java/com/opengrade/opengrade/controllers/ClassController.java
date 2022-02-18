@@ -51,23 +51,23 @@ public class ClassController {
      */
     @FXML
     protected void editStudentName() {
-        try {
-            Student selectedStudent = this.getOneSelectedStudent();
-            // Show dialog to ask for new name
-            TextInputDialog askStudentName = new TextInputDialog();
-            askStudentName.setTitle("Edit student: " + selectedStudent.fullName);
-            askStudentName.setHeaderText("Edit student: " + selectedStudent.fullName);
-            askStudentName.setContentText("What is the student's new name?");
-
-            // If name is given, change name
-            Optional<String> result = askStudentName.showAndWait();
-            if (result.isPresent()) {
-                this.c.editStudentName(selectedStudent, result.get());
-                this.refreshWindow();
-            }
-        } catch (InvalidParameterException exception) {
-            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
-        }
+//        try {
+//            Student selectedStudent = this.getOneSelectedStudent();
+//            // Show dialog to ask for new name
+//            TextInputDialog askStudentName = new TextInputDialog();
+//            askStudentName.setTitle("Edit student: " + selectedStudent.fullName);
+//            askStudentName.setHeaderText("Edit student: " + selectedStudent.fullName);
+//            askStudentName.setContentText("What is the student's new name?");
+//
+//            // If name is given, change name
+//            Optional<String> result = askStudentName.showAndWait();
+//            if (result.isPresent()) {
+//                this.c.editStudentName(selectedStudent, result.get());
+//                this.refreshWindow();
+//            }
+//        } catch (InvalidParameterException exception) {
+//            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+//        }
     }
 
     /**
@@ -75,106 +75,106 @@ public class ClassController {
      */
     @FXML
     protected void createStudent() {
-        // Show dialog to ask for name
-        TextInputDialog askStudentName = new TextInputDialog();
-        askStudentName.setTitle("Create student");
-        askStudentName.setHeaderText("Create student");
-        askStudentName.setContentText("What is the student's name?");
-
-        // If name is given, create student
-        Optional<String> result = askStudentName.showAndWait();
-        if (result.isPresent()) {
-            Student student = new Student(result.get());
-            try {
-                c.addStudent(student);
-            } catch (IllegalArgumentException exception) {
-                // If student already exists
-                new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
-            }
-        }
-
-        this.refreshWindow();
+//        // Show dialog to ask for name
+//        TextInputDialog askStudentName = new TextInputDialog();
+//        askStudentName.setTitle("Create student");
+//        askStudentName.setHeaderText("Create student");
+//        askStudentName.setContentText("What is the student's name?");
+//
+//        // If name is given, create student
+//        Optional<String> result = askStudentName.showAndWait();
+//        if (result.isPresent()) {
+//            Student student = new Student(result.get());
+//            try {
+//                c.addStudent(student);
+//            } catch (IllegalArgumentException exception) {
+//                // If student already exists
+//                new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+//            }
+//        }
+//
+//        this.refreshWindow();
     }
 
-    /**
-     * Checks and returns the selected student.
-     *
-     * @return the selected student
-     * @throws InvalidParameterException too many students selected
-     */
-    private Student getOneSelectedStudent() throws InvalidParameterException {
-        // Get selected student
-        ObservableList<String> selectedStudents = studentsList.getSelectionModel().getSelectedItems();
-        if (selectedStudents.size() != 1) {
-            throw new InvalidParameterException("Please select at most one student.");
-        } else {
-            String selectedStudentName = selectedStudents.get(0);
-            for (Student student : this.c.students) {
-                if (student.fullName.equals(selectedStudentName)) {
-                    return student;
-                }
-            }
-        }
-        return null;
-    }
+//    /**
+//     * Checks and returns the selected student.
+//     *
+//     * @return the selected student
+//     * @throws InvalidParameterException too many students selected
+//     */
+//    private Student getOneSelectedStudent() throws InvalidParameterException {
+//        // Get selected student
+//        ObservableList<String> selectedStudents = studentsList.getSelectionModel().getSelectedItems();
+//        if (selectedStudents.size() != 1) {
+//            throw new InvalidParameterException("Please select at most one student.");
+//        } else {
+//            String selectedStudentName = selectedStudents.get(0);
+//            for (Student student : this.c.students) {
+//                if (student.fullName.equals(selectedStudentName)) {
+//                    return student;
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
     @FXML
     protected void handleCreateAssignmentButton() {
-        // Ask assignment name
-        TextInputDialog askAssignmentName = new TextInputDialog();
-        askAssignmentName.setTitle("Create assignment");
-        askAssignmentName.setHeaderText("Create assignment");
-        askAssignmentName.setContentText("What is the assignment name?");
-
-        Optional<String> assignmentNameResult = askAssignmentName.showAndWait();
-
-        // Assignment name input is empty
-        if (assignmentNameResult.isEmpty()) {
-            new Alert(Alert.AlertType.ERROR, "Please enter an assignment name.").showAndWait();
-            this.handleCreateAssignmentButton();
-        }
-
-        // Assignment already exists
-        if (this.c.getAllAssignments().containsKey(assignmentNameResult.get())) {
-            new Alert(Alert.AlertType.ERROR, "An assignment with this name already exists.").showAndWait();
-            this.handleCreateAssignmentButton();
-        }
-
-        // Get student grades
-        HashMap<Student, Float> grades = new HashMap<Student, Float>();
-        for (Student student : this.c.students) {
-            boolean gradeFormatIsIncorrect = true;
-
-            // This while loop will enforce an input to be from 0-100.
-            while (gradeFormatIsIncorrect) {
-                TextInputDialog askStudentGrade = new TextInputDialog();
-                askStudentGrade.setTitle("Create assignment");
-                askStudentGrade.setHeaderText("Create assignment");
-                askStudentGrade.setContentText(String.format("What is %s's grade?", student.fullName));
-
-                Optional<String> gradeResult = askStudentGrade.showAndWait();
-
-                if (gradeResult.isPresent()) {
-                    try {
-                        float grade = Float.parseFloat(gradeResult.get());
-
-                        // Ensure grade inputted is between 0-100
-                        if (!(0f <= grade && grade <= 100f))
-                            throw new NumberFormatException();
-
-                        gradeFormatIsIncorrect = false;
-
-                        grades.put(student, grade);
-
-                    } catch (NumberFormatException exception) {
-                        // If inputted grade is not a float between 0-100
-                        new Alert(Alert.AlertType.WARNING, "Please enter a number between 0 - 100.").showAndWait();
-                    }
-                }
-            }
-        }
-
-        this.c.createAssignment(assignmentNameResult.get(), grades);
+//        // Ask assignment name
+//        TextInputDialog askAssignmentName = new TextInputDialog();
+//        askAssignmentName.setTitle("Create assignment");
+//        askAssignmentName.setHeaderText("Create assignment");
+//        askAssignmentName.setContentText("What is the assignment name?");
+//
+//        Optional<String> assignmentNameResult = askAssignmentName.showAndWait();
+//
+//        // Assignment name input is empty
+//        if (assignmentNameResult.isEmpty()) {
+//            new Alert(Alert.AlertType.ERROR, "Please enter an assignment name.").showAndWait();
+//            this.handleCreateAssignmentButton();
+//        }
+//
+//        // Assignment already exists
+//        if (this.c.getAllAssignments().containsKey(assignmentNameResult.get())) {
+//            new Alert(Alert.AlertType.ERROR, "An assignment with this name already exists.").showAndWait();
+//            this.handleCreateAssignmentButton();
+//        }
+//
+//        // Get student grades
+//        HashMap<Student, Float> grades = new HashMap<Student, Float>();
+//        for (Student student : this.c.students) {
+//            boolean gradeFormatIsIncorrect = true;
+//
+//            // This while loop will enforce an input to be from 0-100.
+//            while (gradeFormatIsIncorrect) {
+//                TextInputDialog askStudentGrade = new TextInputDialog();
+//                askStudentGrade.setTitle("Create assignment");
+//                askStudentGrade.setHeaderText("Create assignment");
+//                askStudentGrade.setContentText(String.format("What is %s's grade?", student.fullName));
+//
+//                Optional<String> gradeResult = askStudentGrade.showAndWait();
+//
+//                if (gradeResult.isPresent()) {
+//                    try {
+//                        float grade = Float.parseFloat(gradeResult.get());
+//
+//                        // Ensure grade inputted is between 0-100
+//                        if (!(0f <= grade && grade <= 100f))
+//                            throw new NumberFormatException();
+//
+//                        gradeFormatIsIncorrect = false;
+//
+//                        grades.put(student, grade);
+//
+//                    } catch (NumberFormatException exception) {
+//                        // If inputted grade is not a float between 0-100
+//                        new Alert(Alert.AlertType.WARNING, "Please enter a number between 0 - 100.").showAndWait();
+//                    }
+//                }
+//            }
+//        }
+//
+//        this.c.createAssignment(assignmentNameResult.get(), grades);
     }
 
     @FXML
@@ -206,6 +206,7 @@ public class ClassController {
         try {
             Class.openClassGUI(c, (Stage) studentsList.getScene().getWindow());
         } catch (IOException exception) {
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
             exception.printStackTrace();
         }
     }

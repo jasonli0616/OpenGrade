@@ -8,7 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -44,12 +43,19 @@ public class MainController {
     @FXML
     protected void handleOpenExistingClassButton() throws IOException {
 
-        ChoiceDialog<String> choiceDialog = new ChoiceDialog<String>();
+        ArrayList<Class> classes = Database.getAllClasses();
+
+        ChoiceDialog<Class> choiceDialog = new ChoiceDialog<Class>();
         choiceDialog.setTitle("Select class");
         choiceDialog.setHeaderText("Select class");
         choiceDialog.setContentText("Please select a class:");
+        choiceDialog.getItems().setAll(classes);
 
-        // TODO: Search database for classes, and insert to choice dialog
-        // TODO: Handle user selection, and open class page
+        choiceDialog.showAndWait();
+
+        Optional<Class> result = choiceDialog.showAndWait();
+        if (result.isPresent()) {
+            Class.openClassGUI(result.get(), (Stage) openExistingClassButton.getScene().getWindow());
+        }
     }
 }

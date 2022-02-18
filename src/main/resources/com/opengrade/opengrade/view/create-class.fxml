@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import java.net.URL?>
-<VBox alignment="TOP_CENTER" xmlns="http://javafx.com/javafx"
+<BorderPane xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.opengrade.opengrade.controllers.CreateClassController"
       id="body">
@@ -16,25 +16,36 @@
         <URL value="@../css/create-class.css"/>
     </stylesheets>
 
-    <Label styleClass="title" text="Create a new class"/>
+    <center>
+        <VBox alignment="TOP_CENTER">
+            <Label styleClass="title" text="Create a new class"/>
 
-    <Region prefHeight="30"/>
+            <Region prefHeight="30"/>
 
-    <HBox alignment="CENTER">
-        <Label styleClass="p" text="Class name:"/>
-        <Region prefWidth="10"/>
-        <TextField fx:id="classNameInput"/>
-    </HBox>
+            <HBox alignment="CENTER">
+                <Label styleClass="p" text="Class name:"/>
+                <Region prefWidth="10"/>
+                <TextField fx:id="classNameInput"/>
+            </HBox>
 
-    <Region prefHeight="10"/>
+            <Region prefHeight="10"/>
 
-    <Button styleClass="button" text="Add student" onAction="#handleAddStudentButton"/>
+            <Button styleClass="button" text="Add student" onAction="#handleAddStudentButton"/>
 
-    <Region prefHeight="30"/>
+            <Region prefHeight="30"/>
 
-    <Button styleClass="button" text="Create class" onAction="#handleCreateClassButton"/>
+            <Button styleClass="button" text="Create class" onAction="#handleCreateClassButton"/>
 
-    <Region prefHeight="30"/>
-    <VBox fx:id="showStudents" alignment="CENTER" />
+            <Region prefHeight="30"/>
+        </VBox>
+    </center>
 
-</VBox>
+    <right>
+        <VBox>
+            <Label styleClass="p" text="Students"/>
+            <ListView fx:id="addedStudentsList" prefWidth="150"/>
+            <Button text="Remove selected student" onAction="#removeSelectedStudent"/>
+        </VBox>
+    </right>
+
+</BorderPane>

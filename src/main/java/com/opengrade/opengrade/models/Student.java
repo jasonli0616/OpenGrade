@@ -1,5 +1,6 @@
 package com.opengrade.opengrade.models;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Student {
@@ -7,27 +8,39 @@ public class Student {
 
     public String fullName;
 
-    public HashMap<String, Float> assignments = new HashMap<String, Float>();
+    public ArrayList<HashMap<String, Object>> assignments = new ArrayList<HashMap<String, Object>>();
 
     public Student(String fullName) {
         this.fullName = fullName;
     }
 
-    public Student(String fullName, HashMap<String, Float> assignments) {
+    public Student(String fullName, ArrayList<HashMap<String, Object>> assignments) {
         this.fullName = fullName;
         this.assignments = assignments;
     }
 
     /**
-     * Add an assignment to the student.
-     * This method should only be called when creating an assignment for the entire class,
-     * not for an individual student.
+     * Add an assignment to the student, and insert into the database.
      *
-     * @param assignment the name of the assignment
-     * @param grade the grade the student received on the assignment
+     * @param c the class that this assignment is part of
+     * @param assignmentName the name of the assignment
+     * @param knowledgeGrade strand: knowledge
+     * @param thinkingGrade strand: thinking
+     * @param communicationGrade strand: communication
+     * @param applicationGrade strand: application
      */
-    public void addAssignment(String assignment, float grade) {
-        this.assignments.put(assignment, grade);
+    public void addAssignment(Class c, String assignmentName, float knowledgeMark, float thinkingMark, float communicationMark, float applicationMark) {
+        HashMap<String, Object> assignment = new HashMap<String, Object>();
+        assignment.put("class_id", c.id);
+        assignment.put("assignment_name", assignmentName);
+        assignment.put("knowledge_mark", knowledgeMark);
+        assignment.put("thinking_mark", thinkingMark);
+        assignment.put("communication_mark", communicationMark);
+        assignment.put("application_mark", applicationMark);
+
+        this.assignments.add(assignment);
+
+        // TODO: Insert into database
     }
 
     /**
@@ -38,29 +51,7 @@ public class Student {
      * @param assignment the assignment to remove from the student
      */
     public void removeAssignment(String assignment) {
-        this.assignments.remove(assignment);
-    }
-
-    /**
-     * Update an assignment name
-     * This method should only be called when updating the name of an assignment for the entire class,
-     * not for an individual student.
-     *
-     * @param oldAssignment the old name of the assignment
-     * @param newAssignment the new name of the assignment
-     */
-    public void updateAssignmentName(String oldAssignment, String newAssignment) {
-        float grade = assignments.get(oldAssignment);
-        this.removeAssignment(oldAssignment);
-        this.addAssignment(newAssignment, grade);
-    }
-
-    public float getAverage() {
-        float grades = 0;
-        for (float grade : assignments.values()) {
-            grades += grade;
-        }
-        return grades / assignments.size();
+        // TODO
     }
 
     @Override
