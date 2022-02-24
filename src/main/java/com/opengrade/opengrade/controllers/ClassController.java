@@ -1,5 +1,6 @@
 package com.opengrade.opengrade.controllers;
 
+import com.opengrade.opengrade.Database;
 import com.opengrade.opengrade.Main;
 import com.opengrade.opengrade.models.Class;
 import com.opengrade.opengrade.models.Student;
@@ -38,11 +39,18 @@ public class ClassController {
      */
     private void showStudentsList() {
         ArrayList<Student> students = this.c.students;
-        if (!students.isEmpty()) {
-            for (Student student : students) {
-                // Add student to ListView
-                studentsList.getItems().add(student.fullName);
-            }
+        for (Student student : students) {
+            // Add student to ListView
+            studentsList.getItems().add(student.fullName);
+        }
+    }
+
+    /**
+     * Shows the list of students' average grade.
+     */
+    private void showGradeList() {
+        for (Student student : this.c.students) {
+            gradeList.getItems().add(String.format("%.2f%%", student.getAverage(this.c)));
         }
     }
 
@@ -51,23 +59,23 @@ public class ClassController {
      */
     @FXML
     protected void editStudentName() {
-//        try {
-//            Student selectedStudent = this.getOneSelectedStudent();
-//            // Show dialog to ask for new name
-//            TextInputDialog askStudentName = new TextInputDialog();
-//            askStudentName.setTitle("Edit student: " + selectedStudent.fullName);
-//            askStudentName.setHeaderText("Edit student: " + selectedStudent.fullName);
-//            askStudentName.setContentText("What is the student's new name?");
-//
-//            // If name is given, change name
-//            Optional<String> result = askStudentName.showAndWait();
-//            if (result.isPresent()) {
-//                this.c.editStudentName(selectedStudent, result.get());
-//                this.refreshWindow();
-//            }
-//        } catch (InvalidParameterException exception) {
-//            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
-//        }
+        try {
+            Student selectedStudent = this.getOneSelectedStudent();
+            // Show dialog to ask for new name
+            TextInputDialog askStudentName = new TextInputDialog();
+            askStudentName.setTitle("Edit student: " + selectedStudent.fullName);
+            askStudentName.setHeaderText("Edit student: " + selectedStudent.fullName);
+            askStudentName.setContentText("What is the student's new name?");
+
+            // If name is given, change name
+            Optional<String> result = askStudentName.showAndWait();
+            if (result.isPresent()) {
+                this.c.editStudentName(selectedStudent, result.get());
+                this.refreshWindow();
+            }
+        } catch (InvalidParameterException exception) {
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+        }
     }
 
     /**
@@ -75,48 +83,218 @@ public class ClassController {
      */
     @FXML
     protected void createStudent() {
-//        // Show dialog to ask for name
-//        TextInputDialog askStudentName = new TextInputDialog();
-//        askStudentName.setTitle("Create student");
-//        askStudentName.setHeaderText("Create student");
-//        askStudentName.setContentText("What is the student's name?");
-//
-//        // If name is given, create student
-//        Optional<String> result = askStudentName.showAndWait();
-//        if (result.isPresent()) {
-//            Student student = new Student(result.get());
-//            try {
-//                c.addStudent(student);
-//            } catch (IllegalArgumentException exception) {
-//                // If student already exists
-//                new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
-//            }
-//        }
-//
-//        this.refreshWindow();
+        // Ask existing/new student
+        ChoiceDialog<String> studentTypeChoice = new ChoiceDialog<String>();
+        studentTypeChoice.setTitle("Add student");
+        studentTypeChoice.setHeaderText("Add student");
+        studentTypeChoice.setContentText("Please select the student type:");
+        studentTypeChoice.getItems().addAll("Select existing student", "Create new student");
+        Optional<String> studentTypeChoiceResult = studentTypeChoice.showAndWait();
+
+        if (studentTypeChoiceResult.isPresent()) {
+            if (studentTypeChoiceResult.get().equals("Select existing student")) {
+
+                if (Database.getAllStudents().isEmpty()) {
+                    new Alert(Alert.AlertType.ERROR, "There are no existing students.").showAndWait();
+                    this.createStudent();
+                } else {
+                    ChoiceDialog<Student> chooseStudentDialog = new ChoiceDialog<Student>();
+                    chooseStudentDialog.setTitle("Select a student");
+                    chooseStudentDialog.setHeaderText("Select a student");
+                    chooseStudentDialog.setContentText("Please select a student:");
+
+                    for (Student student : Database.getAllStudents()) {
+                        chooseStudentDialog.getItems().add(student);
+                    }
+
+                    Optional<Student> chooseStudentResult = chooseStudentDialog.showAndWait();
+
+                    if (chooseStudentResult.isPresent()) {
+                        Student chosenStudent = chooseStudentResult.get();
+                        if (this.c.students.contains(chosenStudent))
+                            new Alert(Alert.AlertType.ERROR, String.format("Student %s already exists in this class.", chosenStudent)).showAndWait();
+                        else {
+                            this.c.students.add(chosenStudent);
+                            Database.associateStudentClass(chosenStudent, this.c);
+                        }
+                    }
+                }
+
+            } else {
+                // Insert new student to database, and add to class
+
+                // Show dialog to ask for name
+                TextInputDialog askStudentName = new TextInputDialog();
+                askStudentName.setTitle("Create student");
+                askStudentName.setHeaderText("Create student");
+                askStudentName.setContentText("What is the student's name?");
+
+                // If name is given, create student and add to ArrayList
+                Optional<String> result = askStudentName.showAndWait();
+                if (result.isPresent()) {
+                    Student student = new Student(result.get());
+                    student.id = Database.insertStudent(student);
+
+                    this.c.students.add(student);
+
+                    Database.associateStudentClass(student, this.c);
+                }
+            }
+        }
+
+        this.refreshWindow();
     }
 
-//    /**
-//     * Checks and returns the selected student.
-//     *
-//     * @return the selected student
-//     * @throws InvalidParameterException too many students selected
-//     */
-//    private Student getOneSelectedStudent() throws InvalidParameterException {
-//        // Get selected student
-//        ObservableList<String> selectedStudents = studentsList.getSelectionModel().getSelectedItems();
-//        if (selectedStudents.size() != 1) {
-//            throw new InvalidParameterException("Please select at most one student.");
-//        } else {
-//            String selectedStudentName = selectedStudents.get(0);
-//            for (Student student : this.c.students) {
-//                if (student.fullName.equals(selectedStudentName)) {
-//                    return student;
-//                }
-//            }
-//        }
-//        return null;
-//    }
+    @FXML
+    protected void deleteStudent() {
+        try {
+            Student student = this.getOneSelectedStudent();
+
+            this.c.students.remove(student);
+            Database.unassociateStudentClass(student, this.c);
+
+            this.refreshWindow();
+        } catch (InvalidParameterException exception) {
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+        }
+    }
+
+    @FXML
+    protected void addStudentAssignment() {
+        // Ask assignment name
+        TextInputDialog askAssignmentName = new TextInputDialog();
+        askAssignmentName.setTitle("Create assignment");
+        askAssignmentName.setHeaderText("Create assignment");
+        askAssignmentName.setContentText("What is the assignment name?");
+
+        Optional<String> assignmentNameResult = askAssignmentName.showAndWait();
+
+
+
+        // Ask assignment weight
+        // Use while loop to enforce number input
+        boolean weightIsNotDouble = true;
+        double assignmentWeight = 0;
+
+        while (weightIsNotDouble) {
+            TextInputDialog askAssignmentWeight = new TextInputDialog();
+            askAssignmentWeight.setTitle("Create assignment");
+            askAssignmentWeight.setHeaderText("Create assignment");
+            askAssignmentWeight.setContentText("What is the assignment weight?");
+
+            Optional<String> assignmentWeightResult = askAssignmentWeight.showAndWait();
+
+            // Get weight as double
+            if (assignmentWeightResult.isPresent()) {
+                try {
+                    assignmentWeight = Double.parseDouble(assignmentWeightResult.get());
+                    weightIsNotDouble = false;
+                } catch (NumberFormatException exception) {
+                    new Alert(Alert.AlertType.ERROR, String.format("%s; Please enter a number.", exception.getMessage())).showAndWait();
+                }
+            }
+        }
+
+        if (assignmentNameResult.isPresent()) {
+            String assignmentName = assignmentNameResult.get();
+
+            // Get each student's grade
+            Student s = this.getOneSelectedStudent();
+
+            this.askStudentAssignmentGrades(s, assignmentName, assignmentWeight);
+        }
+    }
+
+    /**
+     * Ask user for student grades, and insert assignment into database.
+     *
+     * @param s the student who completed the assignment
+     */
+    private void askStudentAssignmentGrades(Student s, String assignmentName, double assignmentWeight) {
+        // Use while loop to enforce number/none input
+        boolean gradeIsNotDoubleOrNone = true;
+
+        while (gradeIsNotDoubleOrNone) {
+
+            // Knowledge grade
+            TextInputDialog askKnowledgeGrade = new TextInputDialog();
+            askKnowledgeGrade.setTitle("Create assignment");
+            askKnowledgeGrade.setHeaderText("Create assignment");
+            askKnowledgeGrade.setContentText(String.format("What is %s's grade in knowledge?", s.fullName));
+            Optional<String> askKnowledgeResult = askKnowledgeGrade.showAndWait();
+
+            // Thinking grade
+            TextInputDialog askThinkingGrade = new TextInputDialog();
+            askThinkingGrade.setTitle("Create assignment");
+            askThinkingGrade.setHeaderText("Create assignment");
+            askThinkingGrade.setContentText(String.format("What is %s's grade in thinking?", s.fullName));
+            Optional<String> askThinkingResult = askThinkingGrade.showAndWait();
+
+            // Communication grade
+            TextInputDialog askCommunicationGrade = new TextInputDialog();
+            askCommunicationGrade.setTitle("Create assignment");
+            askCommunicationGrade.setHeaderText("Create assignment");
+            askCommunicationGrade.setContentText(String.format("What is %s's grade in communication?", s.fullName));
+            Optional<String> askCommunicationResult = askCommunicationGrade.showAndWait();
+
+            // Application grade
+            TextInputDialog askApplicationGrade = new TextInputDialog();
+            askApplicationGrade.setTitle("Create assignment");
+            askApplicationGrade.setHeaderText("Create assignment");
+            askApplicationGrade.setContentText(String.format("What is %s's grade in application?", s.fullName));
+            Optional<String> askApplicationResult = askApplicationGrade.showAndWait();
+
+            // Gather grades info
+            double knowledgeGrade = -1;
+            double thinkingGrade = -1;
+            double communicationGrade = -1;
+            double applicationGrade = -1;
+
+            try {
+                if (askKnowledgeResult.isPresent())
+                    knowledgeGrade = Double.parseDouble(askKnowledgeResult.get());
+
+                if (askThinkingResult.isPresent())
+                    thinkingGrade = Double.parseDouble(askThinkingResult.get());
+
+                if (askCommunicationResult.isPresent())
+                    communicationGrade = Double.parseDouble(askCommunicationResult.get());
+
+                if (askApplicationResult.isPresent())
+                    applicationGrade = Double.parseDouble(askApplicationResult.get());
+
+                gradeIsNotDoubleOrNone = false;
+
+                // Create assignment for student
+                s.addAssignment(this.c, assignmentName, knowledgeGrade, thinkingGrade, communicationGrade, applicationGrade, assignmentWeight);
+
+            } catch (NumberFormatException exception) {
+                new Alert(Alert.AlertType.ERROR, String.format("%s; Please enter a number.", exception.getMessage())).showAndWait();
+            }
+        }
+    }
+
+    /**
+     * Checks and returns the selected student.
+     *
+     * @return the selected student
+     * @throws InvalidParameterException too many students selected
+     */
+    private Student getOneSelectedStudent() throws InvalidParameterException {
+        // Get selected student
+        ObservableList<String> selectedStudents = studentsList.getSelectionModel().getSelectedItems();
+        if (selectedStudents.size() != 1) {
+            throw new InvalidParameterException("Please select exactly one student.");
+        } else {
+            String selectedStudentName = selectedStudents.get(0);
+            for (Student student : this.c.students) {
+                if (student.fullName.equals(selectedStudentName)) {
+                    return student;
+                }
+            }
+        }
+        return null;
+    }
 
     @FXML
     protected void handleCreateAssignmentButton() {
@@ -157,70 +335,9 @@ public class ClassController {
         if (assignmentNameResult.isPresent()) {
             String assignmentName = assignmentNameResult.get();
 
-            // Get each student's grade
+            // Get each student's grade and insert assignment
             for (Student s : this.c.students) {
-
-                // Use while loop to enforce number/none input
-                boolean gradeIsNotDoubleOrNone = true;
-
-                while (gradeIsNotDoubleOrNone) {
-
-                    // Knowledge grade
-                    TextInputDialog askKnowledgeGrade = new TextInputDialog();
-                    askKnowledgeGrade.setTitle("Create assignment");
-                    askKnowledgeGrade.setHeaderText("Create assignment");
-                    askKnowledgeGrade.setContentText(String.format("What is %s's grade in knowledge?", s.fullName));
-                    Optional<String> askKnowledgeResult = askKnowledgeGrade.showAndWait();
-
-                    // Thinking grade
-                    TextInputDialog askThinkingGrade = new TextInputDialog();
-                    askThinkingGrade.setTitle("Create assignment");
-                    askThinkingGrade.setHeaderText("Create assignment");
-                    askThinkingGrade.setContentText(String.format("What is %s's grade in thinking?", s.fullName));
-                    Optional<String> askThinkingResult = askThinkingGrade.showAndWait();
-
-                    // Communication grade
-                    TextInputDialog askCommunicationGrade = new TextInputDialog();
-                    askCommunicationGrade.setTitle("Create assignment");
-                    askCommunicationGrade.setHeaderText("Create assignment");
-                    askCommunicationGrade.setContentText(String.format("What is %s's grade in communication?", s.fullName));
-                    Optional<String> askCommunicationResult = askCommunicationGrade.showAndWait();
-
-                    // Application grade
-                    TextInputDialog askApplicationGrade = new TextInputDialog();
-                    askApplicationGrade.setTitle("Create assignment");
-                    askApplicationGrade.setHeaderText("Create assignment");
-                    askApplicationGrade.setContentText(String.format("What is %s's grade in application?", s.fullName));
-                    Optional<String> askApplicationResult = askApplicationGrade.showAndWait();
-
-                    // Gather grades info
-                    double knowledgeGrade = -1;
-                    double thinkingGrade = -1;
-                    double communicationGrade = -1;
-                    double applicationGrade = -1;
-
-                    try {
-                        if (askKnowledgeResult.isPresent())
-                            knowledgeGrade = Double.parseDouble(askKnowledgeResult.get());
-
-                        if (askThinkingResult.isPresent())
-                            thinkingGrade = Double.parseDouble(askThinkingResult.get());
-
-                        if (askCommunicationResult.isPresent())
-                            communicationGrade = Double.parseDouble(askCommunicationResult.get());
-
-                        if (askApplicationResult.isPresent())
-                            applicationGrade = Double.parseDouble(askApplicationResult.get());
-
-                        gradeIsNotDoubleOrNone = false;
-
-                        // Create assignment for student
-                        s.addAssignment(this.c, assignmentName, knowledgeGrade, thinkingGrade, communicationGrade, applicationGrade, assignmentWeight);
-
-                    } catch (NumberFormatException exception) {
-                        new Alert(Alert.AlertType.ERROR, String.format("%s; Please enter a number.", exception.getMessage())).showAndWait();
-                    }
-                }
+                this.askStudentAssignmentGrades(s, assignmentName, assignmentWeight);
             }
         }
     }
@@ -280,11 +397,8 @@ public class ClassController {
      */
     private void drawWindow() {
         this.showStudentsList();
+        this.showGradeList();
 
         this.title.setText(c.className);
-
-        for (Student s : this.c.students) {
-            System.out.printf("Student: %s; Average: %f\n", s.fullName, s.getAverage(this.c));
-        }
     }
 }

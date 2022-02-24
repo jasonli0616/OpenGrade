@@ -6,6 +6,7 @@ import com.opengrade.opengrade.models.Class;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
 import javafx.stage.Stage;
@@ -45,15 +46,19 @@ public class MainController {
 
         ArrayList<Class> classes = Database.getAllClasses();
 
-        ChoiceDialog<Class> choiceDialog = new ChoiceDialog<Class>();
-        choiceDialog.setTitle("Select class");
-        choiceDialog.setHeaderText("Select class");
-        choiceDialog.setContentText("Please select a class:");
-        choiceDialog.getItems().setAll(classes);
+        if (classes.isEmpty()) {
+            new Alert(Alert.AlertType.ERROR, "There are no existing classes.").showAndWait();
+        } else {
+            ChoiceDialog<Class> choiceDialog = new ChoiceDialog<Class>();
+            choiceDialog.setTitle("Select class");
+            choiceDialog.setHeaderText("Select class");
+            choiceDialog.setContentText("Please select a class:");
+            choiceDialog.getItems().setAll(classes);
 
-        Optional<Class> result = choiceDialog.showAndWait();
-        if (result.isPresent()) {
-            Class.openClassGUI(result.get(), (Stage) openExistingClassButton.getScene().getWindow());
+            Optional<Class> result = choiceDialog.showAndWait();
+            if (result.isPresent()) {
+                Class.openClassGUI(result.get(), (Stage) openExistingClassButton.getScene().getWindow());
+            }
         }
     }
 }

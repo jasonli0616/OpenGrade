@@ -145,4 +145,12 @@ public class Student {
     public String toString() {
         return this.fullName;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        try {
+            return ((Student) o).id == this.id;
+        } catch (Exception ignored) {}
+        return false;
+    }
 }

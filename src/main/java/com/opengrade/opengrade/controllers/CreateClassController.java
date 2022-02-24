@@ -39,23 +39,29 @@ public class CreateClassController {
 
         if (studentTypeChoiceResult.isPresent()) {
             if (studentTypeChoiceResult.get().equals("Select existing student")) {
-                ChoiceDialog<Student> chooseStudentDialog = new ChoiceDialog<Student>();
-                chooseStudentDialog.setTitle("Select a student");
-                chooseStudentDialog.setHeaderText("Select a student");
-                chooseStudentDialog.setContentText("Please select a student:");
 
-                for (Student student : Database.getAllStudents()) {
-                    chooseStudentDialog.getItems().add(student);
-                }
+                if (Database.getAllStudents().isEmpty()) {
+                    new Alert(Alert.AlertType.ERROR, "There are no existing students.").showAndWait();
+                    this.handleAddStudentButton();
+                } else {
+                    ChoiceDialog<Student> chooseStudentDialog = new ChoiceDialog<Student>();
+                    chooseStudentDialog.setTitle("Select a student");
+                    chooseStudentDialog.setHeaderText("Select a student");
+                    chooseStudentDialog.setContentText("Please select a student:");
 
-                Optional<Student> chooseStudentResult = chooseStudentDialog.showAndWait();
+                    for (Student student : Database.getAllStudents()) {
+                        chooseStudentDialog.getItems().add(student);
+                    }
 
-                if (chooseStudentResult.isPresent()) {
-                    Student chosenStudent = chooseStudentResult.get();
-                    if (this.addedStudents.contains(chosenStudent))
-                        new Alert(Alert.AlertType.ERROR, String.format("Student %s already exists in this class.", chosenStudent)).showAndWait();
-                    else
-                        this.addedStudents.add(chosenStudent);
+                    Optional<Student> chooseStudentResult = chooseStudentDialog.showAndWait();
+
+                    if (chooseStudentResult.isPresent()) {
+                        Student chosenStudent = chooseStudentResult.get();
+                        if (this.addedStudents.contains(chosenStudent))
+                            new Alert(Alert.AlertType.ERROR, String.format("Student %s already exists in this class.", chosenStudent)).showAndWait();
+                        else
+                            this.addedStudents.add(chosenStudent);
+                    }
                 }
 
             } else {

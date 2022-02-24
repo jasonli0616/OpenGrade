@@ -55,7 +55,7 @@ public class Database {
                 + "                         thinking_mark       REAL,"
                 + "                         communication_mark  REAL,"
                 + "                         application_mark    REAL,"
-                + "                         weight              REAL"
+                + "                         weight              REAL,"
                 + "                         student_id          INTEGER NOT NULL,"
                 + "                         class_id            INTEGER NOT NULL,"
                 + "                         FOREIGN KEY (student_id) REFERENCES students(id),"
@@ -128,8 +128,10 @@ public class Database {
 
             pstmt.executeUpdate();
 
+            int studentID = pstmt.getGeneratedKeys().getInt(1);
+
             conn.close();
-            return pstmt.getGeneratedKeys().getInt(1);
+            return studentID;
         } catch (SQLException exception) {
             new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
             exception.printStackTrace();
@@ -314,36 +316,77 @@ public class Database {
     }
 
     /**
+     * Insert an existing student into an existing class.
+     *
+     * @param s the student to insert into the class
+     * @param c the class that the student will be inserted into
+     */
+    public static void associateStudentClass(Student s, Class c) {
+        String query = "INSERT INTO associate_student_class (student_id, class_id)"
+                + "     VALUES (?,?)";
+
+        Connection conn = connect();
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, s.id);
+            pstmt.setInt(2, c.id);
+            pstmt.executeUpdate();
+
+            conn.close();
+        } catch (SQLException exception) {
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+            exception.printStackTrace();
+        }
+    }
+
+    public static void unassociateStudentClass(Student s, Class c) {
+        String query = "DELETE FROM associate_student_class"
+                + "     WHERE student_id = ?"
+                + "     AND class_id = ?";
+
+        Connection conn = connect();
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, s.id);
+            pstmt.setInt(2, c.id);
+            pstmt.executeUpdate();
+
+            conn.close();
+        } catch (SQLException exception) {
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+            exception.printStackTrace();
+        }
+    }
+
+    /**
      * Inserts a class into the database.
      *
      * @param c the class to insert
      * @returns the id of the class in the database
      */
     public static int insertClass(Class c) {
-        String insertClassQuery = "INSERT INTO classes (class_name)"
-                + "         VALUES (?)";
-
-        String associateStudentClassQuery = "INSERT INTO associate_student_class (student_id, class_id)"
-                + "                             VALUES (?,?)";
+        String query = "INSERT INTO classes (class_name)"
+                + "     VALUES (?)";
 
         Connection conn = connect();
 
         try {
             // Insert class
-            PreparedStatement insertClassPstmt = conn.prepareStatement(insertClassQuery);
-            insertClassPstmt.setString(1, c.className);
-            insertClassPstmt.executeUpdate();
-            c.id = insertClassPstmt.getGeneratedKeys().getInt(1);
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, c.className);
+            pstmt.executeUpdate();
+            c.id = pstmt.getGeneratedKeys().getInt(1);
 
             // For every student, associate class
-            PreparedStatement associateStudentClassPstmt = conn.prepareStatement(associateStudentClassQuery);
             for (Student s : c.students) {
-                associateStudentClassPstmt.setInt(1, s.id);
-                associateStudentClassPstmt.setInt(2, c.id);
-                associateStudentClassPstmt.executeUpdate();
+                associateStudentClass(s, c);
             }
 
             conn.close();
+
+            return c.id;
         } catch (SQLException exception) {
             new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
             exception.printStackTrace();
