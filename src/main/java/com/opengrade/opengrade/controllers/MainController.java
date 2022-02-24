@@ -51,8 +51,6 @@ public class MainController {
         choiceDialog.setContentText("Please select a class:");
         choiceDialog.getItems().setAll(classes);
 
-        choiceDialog.showAndWait();
-
         Optional<Class> result = choiceDialog.showAndWait();
         if (result.isPresent()) {
             Class.openClassGUI(result.get(), (Stage) openExistingClassButton.getScene().getWindow());

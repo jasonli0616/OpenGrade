@@ -120,61 +120,109 @@ public class ClassController {
 
     @FXML
     protected void handleCreateAssignmentButton() {
-//        // Ask assignment name
-//        TextInputDialog askAssignmentName = new TextInputDialog();
-//        askAssignmentName.setTitle("Create assignment");
-//        askAssignmentName.setHeaderText("Create assignment");
-//        askAssignmentName.setContentText("What is the assignment name?");
-//
-//        Optional<String> assignmentNameResult = askAssignmentName.showAndWait();
-//
-//        // Assignment name input is empty
-//        if (assignmentNameResult.isEmpty()) {
-//            new Alert(Alert.AlertType.ERROR, "Please enter an assignment name.").showAndWait();
-//            this.handleCreateAssignmentButton();
-//        }
-//
-//        // Assignment already exists
-//        if (this.c.getAllAssignments().containsKey(assignmentNameResult.get())) {
-//            new Alert(Alert.AlertType.ERROR, "An assignment with this name already exists.").showAndWait();
-//            this.handleCreateAssignmentButton();
-//        }
-//
-//        // Get student grades
-//        HashMap<Student, Float> grades = new HashMap<Student, Float>();
-//        for (Student student : this.c.students) {
-//            boolean gradeFormatIsIncorrect = true;
-//
-//            // This while loop will enforce an input to be from 0-100.
-//            while (gradeFormatIsIncorrect) {
-//                TextInputDialog askStudentGrade = new TextInputDialog();
-//                askStudentGrade.setTitle("Create assignment");
-//                askStudentGrade.setHeaderText("Create assignment");
-//                askStudentGrade.setContentText(String.format("What is %s's grade?", student.fullName));
-//
-//                Optional<String> gradeResult = askStudentGrade.showAndWait();
-//
-//                if (gradeResult.isPresent()) {
-//                    try {
-//                        float grade = Float.parseFloat(gradeResult.get());
-//
-//                        // Ensure grade inputted is between 0-100
-//                        if (!(0f <= grade && grade <= 100f))
-//                            throw new NumberFormatException();
-//
-//                        gradeFormatIsIncorrect = false;
-//
-//                        grades.put(student, grade);
-//
-//                    } catch (NumberFormatException exception) {
-//                        // If inputted grade is not a float between 0-100
-//                        new Alert(Alert.AlertType.WARNING, "Please enter a number between 0 - 100.").showAndWait();
-//                    }
-//                }
-//            }
-//        }
-//
-//        this.c.createAssignment(assignmentNameResult.get(), grades);
+        // Ask assignment name
+        TextInputDialog askAssignmentName = new TextInputDialog();
+        askAssignmentName.setTitle("Create assignment");
+        askAssignmentName.setHeaderText("Create assignment");
+        askAssignmentName.setContentText("What is the assignment name?");
+
+        Optional<String> assignmentNameResult = askAssignmentName.showAndWait();
+
+
+
+        // Ask assignment weight
+        // Use while loop to enforce number input
+        boolean weightIsNotDouble = true;
+        double assignmentWeight = 0;
+
+        while (weightIsNotDouble) {
+            TextInputDialog askAssignmentWeight = new TextInputDialog();
+            askAssignmentWeight.setTitle("Create assignment");
+            askAssignmentWeight.setHeaderText("Create assignment");
+            askAssignmentWeight.setContentText("What is the assignment weight?");
+
+            Optional<String> assignmentWeightResult = askAssignmentWeight.showAndWait();
+
+            // Get weight as double
+            if (assignmentWeightResult.isPresent()) {
+                try {
+                    assignmentWeight = Double.parseDouble(assignmentWeightResult.get());
+                    weightIsNotDouble = false;
+                } catch (NumberFormatException exception) {
+                    new Alert(Alert.AlertType.ERROR, String.format("%s; Please enter a number.", exception.getMessage())).showAndWait();
+                }
+            }
+        }
+
+        if (assignmentNameResult.isPresent()) {
+            String assignmentName = assignmentNameResult.get();
+
+            // Get each student's grade
+            for (Student s : this.c.students) {
+
+                // Use while loop to enforce number/none input
+                boolean gradeIsNotDoubleOrNone = true;
+
+                while (gradeIsNotDoubleOrNone) {
+
+                    // Knowledge grade
+                    TextInputDialog askKnowledgeGrade = new TextInputDialog();
+                    askKnowledgeGrade.setTitle("Create assignment");
+                    askKnowledgeGrade.setHeaderText("Create assignment");
+                    askKnowledgeGrade.setContentText(String.format("What is %s's grade in knowledge?", s.fullName));
+                    Optional<String> askKnowledgeResult = askKnowledgeGrade.showAndWait();
+
+                    // Thinking grade
+                    TextInputDialog askThinkingGrade = new TextInputDialog();
+                    askThinkingGrade.setTitle("Create assignment");
+                    askThinkingGrade.setHeaderText("Create assignment");
+                    askThinkingGrade.setContentText(String.format("What is %s's grade in thinking?", s.fullName));
+                    Optional<String> askThinkingResult = askThinkingGrade.showAndWait();
+
+                    // Communication grade
+                    TextInputDialog askCommunicationGrade = new TextInputDialog();
+                    askCommunicationGrade.setTitle("Create assignment");
+                    askCommunicationGrade.setHeaderText("Create assignment");
+                    askCommunicationGrade.setContentText(String.format("What is %s's grade in communication?", s.fullName));
+                    Optional<String> askCommunicationResult = askCommunicationGrade.showAndWait();
+
+                    // Application grade
+                    TextInputDialog askApplicationGrade = new TextInputDialog();
+                    askApplicationGrade.setTitle("Create assignment");
+                    askApplicationGrade.setHeaderText("Create assignment");
+                    askApplicationGrade.setContentText(String.format("What is %s's grade in application?", s.fullName));
+                    Optional<String> askApplicationResult = askApplicationGrade.showAndWait();
+
+                    // Gather grades info
+                    double knowledgeGrade = -1;
+                    double thinkingGrade = -1;
+                    double communicationGrade = -1;
+                    double applicationGrade = -1;
+
+                    try {
+                        if (askKnowledgeResult.isPresent())
+                            knowledgeGrade = Double.parseDouble(askKnowledgeResult.get());
+
+                        if (askThinkingResult.isPresent())
+                            thinkingGrade = Double.parseDouble(askThinkingResult.get());
+
+                        if (askCommunicationResult.isPresent())
+                            communicationGrade = Double.parseDouble(askCommunicationResult.get());
+
+                        if (askApplicationResult.isPresent())
+                            applicationGrade = Double.parseDouble(askApplicationResult.get());
+
+                        gradeIsNotDoubleOrNone = false;
+
+                        // Create assignment for student
+                        s.addAssignment(this.c, assignmentName, knowledgeGrade, thinkingGrade, communicationGrade, applicationGrade, assignmentWeight);
+
+                    } catch (NumberFormatException exception) {
+                        new Alert(Alert.AlertType.ERROR, String.format("%s; Please enter a number.", exception.getMessage())).showAndWait();
+                    }
+                }
+            }
+        }
     }
 
     @FXML
@@ -234,5 +282,9 @@ public class ClassController {
         this.showStudentsList();
 
         this.title.setText(c.className);
+
+        for (Student s : this.c.students) {
+            System.out.printf("Student: %s; Average: %f\n", s.fullName, s.getAverage(this.c));
+        }
     }
 }

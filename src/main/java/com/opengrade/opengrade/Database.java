@@ -1,5 +1,6 @@
 package com.opengrade.opengrade;
 
+import com.opengrade.opengrade.models.AssignmentAttribute;
 import com.opengrade.opengrade.models.Class;
 import com.opengrade.opengrade.models.Student;
 import javafx.scene.control.Alert;
@@ -36,8 +37,8 @@ public class Database {
                 + "                 )";
 
         String studentsTableQuery = "CREATE TABLE IF NOT EXISTS students ("
-                + "                      id          INTEGER PRIMARY KEY,"
-                + "                      student_name  TEXT NOT NULL"
+                + "                      id           INTEGER PRIMARY KEY,"
+                + "                      student_name TEXT NOT NULL"
                 + "                  )";
 
         String associateStudentClassTableQuery = "CREATE TABLE IF NOT EXISTS associate_student_class ("
@@ -50,10 +51,11 @@ public class Database {
         String assignmentsTableQuery = "CREATE TABLE IF NOT EXISTS assignments ("
                 + "                         id                  INTEGER PRIMARY KEY,"
                 + "                         assignment_name     TEXT NOT NULL,"
-                + "                         knowledge_mark      INTEGER,"
-                + "                         thinking_mark       INTEGER,"
-                + "                         communication_mark  INTEGER,"
-                + "                         application_mark    INTEGER,"
+                + "                         knowledge_mark      REAL,"
+                + "                         thinking_mark       REAL,"
+                + "                         communication_mark  REAL,"
+                + "                         application_mark    REAL,"
+                + "                         weight              REAL"
                 + "                         student_id          INTEGER NOT NULL,"
                 + "                         class_id            INTEGER NOT NULL,"
                 + "                         FOREIGN KEY (student_id) REFERENCES students(id),"
@@ -72,7 +74,7 @@ public class Database {
 
             conn.close();
         } catch (SQLException exception) {
-            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+//            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
             exception.printStackTrace();
         }
     }
@@ -112,7 +114,7 @@ public class Database {
      * Inserts a student into the database.
      *
      * @param student the student to insert
-     * @return the id of the student in the database
+     * @return        the id of the student in the database
      */
     public static int insertStudent(Student student) {
         String query = "INSERT INTO students (student_name)"
@@ -133,6 +135,84 @@ public class Database {
             exception.printStackTrace();
         }
         return 0;
+    }
+
+    /**
+     * Insert an assignment into the database.
+     *
+     * @param student           the student who completed this assignment
+     * @param c                 the class that this assignment was completed in
+     * @param assignmentName    the name of the assignment
+     * @param knowledgeMark     knowledge mark - 20
+     * @param thinkingMark      thinking mark - 15
+     * @param communicationMark communication mark - 15
+     * @param applicationMark   application mark - 15
+     * @param weight            the weight of the assignment
+     */
+    public static void insertStudentAssignment(Student student, Class c, String assignmentName, double knowledgeMark, double thinkingMark, double communicationMark, double applicationMark, double weight) {
+        String query = "INSERT INTO assignments (assignment_name, knowledge_mark, thinking_mark, communication_mark, application_mark, weight, student_id, class_id)"
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        Connection conn = connect();
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, assignmentName);
+            pstmt.setDouble(2, knowledgeMark);
+            pstmt.setDouble(3, thinkingMark);
+            pstmt.setDouble(4, communicationMark);
+            pstmt.setDouble(5, applicationMark);
+            pstmt.setDouble(6, weight);
+            pstmt.setInt(7, student.id);
+            pstmt.setInt(8, c.id);
+
+            pstmt.executeUpdate();
+
+            conn.close();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    /**
+     * Get all assignments of a student.
+     *
+     * @param student the student that the assignments belong to
+     * @return ArrayList of the student's assignments
+     */
+    public static ArrayList<HashMap<String, Object>> getStudentAssignments(Student student) {
+        ArrayList<HashMap<String, Object>> assignments = new ArrayList<HashMap<String, Object>>();
+
+        String query = "SELECT * FROM assignments"
+                + "         WHERE student_id = ?";
+
+        Connection conn = connect();
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, student.id);
+
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                HashMap<String, Object> assignment = new HashMap<String, Object>();
+                assignment.put(AssignmentAttribute.CLASS_ID.attribute, rs.getInt(AssignmentAttribute.CLASS_ID.attribute));
+                assignment.put(AssignmentAttribute.ASSIGNMENT_NAME.attribute, rs.getString(AssignmentAttribute.ASSIGNMENT_NAME.attribute));
+                assignment.put(AssignmentAttribute.KNOWLEDGE_MARK.attribute, rs.getDouble(AssignmentAttribute.KNOWLEDGE_MARK.attribute));
+                assignment.put(AssignmentAttribute.THINKING_MARK.attribute, rs.getDouble(AssignmentAttribute.THINKING_MARK.attribute));
+                assignment.put(AssignmentAttribute.COMMUNICATION_MARK.attribute, rs.getDouble(AssignmentAttribute.COMMUNICATION_MARK.attribute));
+                assignment.put(AssignmentAttribute.APPLICATION_MARK.attribute, rs.getDouble(AssignmentAttribute.APPLICATION_MARK.attribute));
+                assignment.put(AssignmentAttribute.WEIGHT.attribute, rs.getDouble(AssignmentAttribute.WEIGHT.attribute));
+
+                assignments.add(assignment);
+            }
+
+            conn.close();
+            return assignments;
+        } catch (SQLException exception) {
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+            exception.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -183,12 +263,13 @@ public class Database {
                 while (getAssignmentRs.next()) {
                     // Add assignment to student
                     HashMap<String, Object> assignment = new HashMap<String, Object>();
-                    assignment.put("class_id", c.id);
-                    assignment.put("assignment_name", getAssignmentRs.getString("assignment_name"));
-                    assignment.put("knowledge_mark", getAssignmentRs.getInt("knowledge_mark"));
-                    assignment.put("thinking_mark", getAssignmentRs.getInt("thinking_mark"));
-                    assignment.put("communication_mark", getAssignmentRs.getInt("communication_mark"));
-                    assignment.put("application_mark", getAssignmentRs.getInt("application_mark"));
+                    assignment.put(AssignmentAttribute.CLASS_ID.attribute, getAssignmentRs.getInt(AssignmentAttribute.CLASS_ID.attribute));
+                    assignment.put(AssignmentAttribute.ASSIGNMENT_NAME.attribute, getAssignmentRs.getString(AssignmentAttribute.ASSIGNMENT_NAME.attribute));
+                    assignment.put(AssignmentAttribute.KNOWLEDGE_MARK.attribute, getAssignmentRs.getDouble(AssignmentAttribute.KNOWLEDGE_MARK.attribute));
+                    assignment.put(AssignmentAttribute.THINKING_MARK.attribute, getAssignmentRs.getDouble(AssignmentAttribute.THINKING_MARK.attribute));
+                    assignment.put(AssignmentAttribute.COMMUNICATION_MARK.attribute, getAssignmentRs.getDouble(AssignmentAttribute.COMMUNICATION_MARK.attribute));
+                    assignment.put(AssignmentAttribute.APPLICATION_MARK.attribute, getAssignmentRs.getDouble(AssignmentAttribute.APPLICATION_MARK.attribute));
+                    assignment.put(AssignmentAttribute.WEIGHT.attribute, getAssignmentRs.getDouble(AssignmentAttribute.WEIGHT.attribute));
 
                     s.assignments.add(assignment);
                 }
