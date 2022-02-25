@@ -65,6 +65,151 @@ public class Student {
     }
 
     /**
+     * Get the student's average knowledge mark in a specified class
+     *
+     * @param c the class that the assignments belong in
+     * @return the average knowledge mark
+     */
+    public double getKnowledgeAverage(Class c) {
+        double average = 0;
+
+        double assignmentsTotalWeight = 0;
+
+        // Add each assignment to average
+        for (HashMap<String, Object> assignment : assignments) {
+
+            // Get assignments total weight
+            assignmentsTotalWeight += (double) assignment.get(AssignmentAttribute.WEIGHT.attribute);
+
+            // If in specified class
+            if ((int) assignment.get(AssignmentAttribute.CLASS_ID.attribute) == c.id) {
+
+                double assignmentWeight = (double) assignment.get(AssignmentAttribute.WEIGHT.attribute);
+
+                // Get mark
+                if ((double) assignment.get(AssignmentAttribute.KNOWLEDGE_MARK.attribute) > 0) {
+                    double assignmentKnowledge = (double) assignment.get(AssignmentAttribute.KNOWLEDGE_MARK.attribute);
+                    average += assignmentKnowledge * assignmentWeight;
+                }
+            }
+        }
+
+        // Adjust with total weight of assignments
+        average /= assignmentsTotalWeight;
+
+        return average * 20;
+    }
+
+    /**
+     * Get the student's average thinking mark in a specified class
+     *
+     * @param c the class that the assignments belong in
+     * @return the average thinking mark
+     */
+    public double getThinkingAverage(Class c) {
+        double average = 0;
+
+        double assignmentsTotalWeight = 0;
+
+        // Add each assignment to average
+        for (HashMap<String, Object> assignment : assignments) {
+
+            // Get assignments total weight
+            assignmentsTotalWeight += (double) assignment.get(AssignmentAttribute.WEIGHT.attribute);
+
+            // If in specified class
+            if ((int) assignment.get(AssignmentAttribute.CLASS_ID.attribute) == c.id) {
+
+                double assignmentWeight = (double) assignment.get(AssignmentAttribute.WEIGHT.attribute);
+
+                // Get mark
+                if ((double) assignment.get(AssignmentAttribute.THINKING_MARK.attribute) > 0) {
+                    double assignmentThinking = (double) assignment.get(AssignmentAttribute.THINKING_MARK.attribute);
+                    average += assignmentThinking * assignmentWeight;
+                }
+            }
+        }
+
+        // Adjust with total weight of assignments
+        average /= assignmentsTotalWeight;
+
+        return average * 15;
+    }
+
+
+    /**
+     * Get the student's average communication mark in a specified class
+     *
+     * @param c the class that the assignments belong in
+     * @return the average communication mark
+     */
+    public double getCommunicationAverage(Class c) {
+        double average = 0;
+
+        double assignmentsTotalWeight = 0;
+
+        // Add each assignment to average
+        for (HashMap<String, Object> assignment : assignments) {
+
+            // Get assignments total weight
+            assignmentsTotalWeight += (double) assignment.get(AssignmentAttribute.WEIGHT.attribute);
+
+            // If in specified class
+            if ((int) assignment.get(AssignmentAttribute.CLASS_ID.attribute) == c.id) {
+
+                double assignmentWeight = (double) assignment.get(AssignmentAttribute.WEIGHT.attribute);
+
+                // Get mark
+                if ((double) assignment.get(AssignmentAttribute.COMMUNICATION_MARK.attribute) > 0) {
+                    double assignmentCommunication = (double) assignment.get(AssignmentAttribute.COMMUNICATION_MARK.attribute);
+                    average += assignmentCommunication * assignmentWeight;
+                }
+            }
+        }
+
+        // Adjust with total weight of assignments
+        average /= assignmentsTotalWeight;
+
+        return average * 15;
+    }
+
+    /**
+     * Get the student's average thinking mark in a specified class
+     *
+     * @param c the class that the assignments belong in
+     * @return the average thinking mark
+     */
+    public double getApplicationAverage(Class c) {
+        double average = 0;
+
+        double assignmentsTotalWeight = 0;
+
+        // Add each assignment to average
+        for (HashMap<String, Object> assignment : assignments) {
+
+            // Get assignments total weight
+            assignmentsTotalWeight += (double) assignment.get(AssignmentAttribute.WEIGHT.attribute);
+
+            // If in specified class
+            if ((int) assignment.get(AssignmentAttribute.CLASS_ID.attribute) == c.id) {
+
+                double assignmentWeight = (double) assignment.get(AssignmentAttribute.WEIGHT.attribute);
+
+                // Get mark
+                if ((double) assignment.get(AssignmentAttribute.APPLICATION_MARK.attribute) > 0) {
+                    double assignmentApplication = (double) assignment.get(AssignmentAttribute.APPLICATION_MARK.attribute);
+                    average += assignmentApplication * assignmentWeight;
+                }
+            }
+        }
+
+        // Adjust with total weight of assignments
+        average /= assignmentsTotalWeight;
+
+        return average * 20;
+    }
+
+    /**
      * Get the student's average in a specified class
      * Knowledge- 20
      * Thinking- 15
@@ -75,70 +220,8 @@ public class Student {
      * @return  the average mark
      */
     public double getAverage(Class c) {
-        double knowledgeAverage = 0;
-        double thinkingAverage = 0;
-        double communicationAverage = 0;
-        double applicationAverage = 0;
-
-        // Amount of assignments that has the specified strand
-        // E.g. if an assignment doesn't count in one strand, it won't count as 0%
-        int knowledgeAssignmentsLength = 0;
-        int thinkingAssignmentsLength = 0;
-        int communicationAssignmentsLength = 0;
-        int applicationAssignmentsLength = 0;
-
-        // Get assignments total weight
-        double assignmentsTotalWeight = 0;
-        for (HashMap<String, Object> assignment : assignments) {
-            assignmentsTotalWeight += (double) assignment.get(AssignmentAttribute.WEIGHT.attribute);
-        }
-
-
-        // Add each assignment to average
-        for (HashMap<String, Object> assignment : assignments) {
-            // If in specified class
-            if ((int) assignment.get(AssignmentAttribute.CLASS_ID.attribute) == c.id) {
-
-                double assignmentWeight = (double) assignment.get(AssignmentAttribute.WEIGHT.attribute);
-
-                // Knowledge mark
-                if ((double) assignment.get(AssignmentAttribute.KNOWLEDGE_MARK.attribute) > 0) {
-                    double assignmentKnowledge = (double) assignment.get(AssignmentAttribute.KNOWLEDGE_MARK.attribute);
-                    knowledgeAverage += assignmentKnowledge * assignmentWeight;
-                    knowledgeAssignmentsLength += 1;
-                }
-
-                // Thinking mark
-                if ((double) assignment.get(AssignmentAttribute.THINKING_MARK.attribute) > 0) {
-                    double assignmentThinking = (double) assignment.get(AssignmentAttribute.THINKING_MARK.attribute);
-                    thinkingAverage += assignmentThinking * assignmentWeight;
-                    thinkingAssignmentsLength += 1;
-                }
-
-                // Communication mark
-                if ((double) assignment.get(AssignmentAttribute.COMMUNICATION_MARK.attribute) > 0) {
-                    double assignmentCommunication = (double) assignment.get(AssignmentAttribute.COMMUNICATION_MARK.attribute);
-                    communicationAverage += assignmentCommunication * assignmentWeight;
-                    communicationAssignmentsLength += 1;
-                }
-
-                // Application mark
-                if ((double) assignment.get(AssignmentAttribute.APPLICATION_MARK.attribute) > 0) {
-                    double assignmentApplication = (double) assignment.get(AssignmentAttribute.APPLICATION_MARK.attribute);
-                    applicationAverage += assignmentApplication * assignmentWeight;
-                    applicationAssignmentsLength += 1;
-                }
-
-            }
-        }
-
-        // Adjust with total weight of assignments
-        knowledgeAverage /= assignmentsTotalWeight;
-        thinkingAverage /= assignmentsTotalWeight;
-        communicationAverage /= assignmentsTotalWeight;
-        applicationAverage /= assignmentsTotalWeight;
-
-        return (knowledgeAverage * 20 + thinkingAverage * 15 + communicationAverage * 15 + applicationAverage * 20) / 70;
+        // Return the average from all strands
+        return (this.getKnowledgeAverage(c) + this.getThinkingAverage(c) + this.getCommunicationAverage(c) + this.getApplicationAverage(c)) / 70;
     }
 
     @Override
