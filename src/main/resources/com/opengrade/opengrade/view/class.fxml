@@ -49,10 +49,11 @@
                 </VBox>
             </GridPane>
 
-            <Button onAction="#createStudent" text="Add student to class"/>
-            <Button onAction="#addStudentAssignment" text="Create assignment for selected student"/>
+            <Button onAction="#viewSelectedStudentAssignments" text="View select student's assignments"/>
             <Button onAction="#editStudentName" text="Edit selected student's name"/>
+            <Button onAction="#addStudentAssignment" text="Create assignment for selected student"/>
             <Button onAction="#deleteStudent" text="Remove selected student"/>
+            <Button onAction="#createStudent" text="Add student to class"/>
         </VBox>
     </center>
 

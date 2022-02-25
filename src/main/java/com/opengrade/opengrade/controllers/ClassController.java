@@ -42,6 +42,8 @@ public class ClassController {
         for (Student student : students) {
             // Add student to ListView
             studentsList.getItems().add(student.fullName);
+
+            Button viewStudentButton = new Button("View student");
         }
     }
 
@@ -52,6 +54,17 @@ public class ClassController {
         for (Student student : this.c.students) {
             gradeList.getItems().add(String.format("%.2f%%", student.getAverage(this.c)));
         }
+    }
+
+    /**
+     * Shows the student's assignments info.
+     * (marks, etc.)
+     */
+    @FXML
+    protected void viewSelectedStudentAssignments() {
+        // TODO:
+        // * Calculate and retrieve student marks,
+        // * Display window of marks
     }
 
     /**
