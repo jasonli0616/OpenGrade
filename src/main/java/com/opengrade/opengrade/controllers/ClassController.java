@@ -226,80 +226,18 @@ public class ClassController {
     private void askStudentAssignmentGrades(Student s, String assignmentName, double assignmentWeight) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("view/create-assignment.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 400, 400);
+            Scene scene = new Scene(fxmlLoader.load(), 600, 300);
             Stage stage = new Stage();
             stage.setTitle("Create assignment: " + assignmentName);
             stage.setScene(scene);
             CreateAssignmentController controller = fxmlLoader.getController();
-            controller.setAssignment(s, assignmentName, assignmentWeight);
-            stage.show();
+            controller.setAssignment(s, assignmentName, assignmentWeight, this.c);
+            stage.showAndWait();
 
-            // TODO: Use window to input user grades
-
-        } catch (IOException ignored) {}
-
-
-//        // Use while loop to enforce number/none input
-//        boolean gradeIsNotDoubleOrNone = true;
-//
-//        while (gradeIsNotDoubleOrNone) {
-//
-//            // Knowledge grade
-//            TextInputDialog askKnowledgeGrade = new TextInputDialog();
-//            askKnowledgeGrade.setTitle("Create assignment");
-//            askKnowledgeGrade.setHeaderText("Create assignment");
-//            askKnowledgeGrade.setContentText(String.format("What is %s's grade in knowledge?", s.fullName));
-//            Optional<String> askKnowledgeResult = askKnowledgeGrade.showAndWait();
-//
-//            // Thinking grade
-//            TextInputDialog askThinkingGrade = new TextInputDialog();
-//            askThinkingGrade.setTitle("Create assignment");
-//            askThinkingGrade.setHeaderText("Create assignment");
-//            askThinkingGrade.setContentText(String.format("What is %s's grade in thinking?", s.fullName));
-//            Optional<String> askThinkingResult = askThinkingGrade.showAndWait();
-//
-//            // Communication grade
-//            TextInputDialog askCommunicationGrade = new TextInputDialog();
-//            askCommunicationGrade.setTitle("Create assignment");
-//            askCommunicationGrade.setHeaderText("Create assignment");
-//            askCommunicationGrade.setContentText(String.format("What is %s's grade in communication?", s.fullName));
-//            Optional<String> askCommunicationResult = askCommunicationGrade.showAndWait();
-//
-//            // Application grade
-//            TextInputDialog askApplicationGrade = new TextInputDialog();
-//            askApplicationGrade.setTitle("Create assignment");
-//            askApplicationGrade.setHeaderText("Create assignment");
-//            askApplicationGrade.setContentText(String.format("What is %s's grade in application?", s.fullName));
-//            Optional<String> askApplicationResult = askApplicationGrade.showAndWait();
-//
-//            // Gather grades info
-//            double knowledgeGrade = -1;
-//            double thinkingGrade = -1;
-//            double communicationGrade = -1;
-//            double applicationGrade = -1;
-//
-//            try {
-//                if (askKnowledgeResult.isPresent())
-//                    knowledgeGrade = Double.parseDouble(askKnowledgeResult.get());
-//
-//                if (askThinkingResult.isPresent())
-//                    thinkingGrade = Double.parseDouble(askThinkingResult.get());
-//
-//                if (askCommunicationResult.isPresent())
-//                    communicationGrade = Double.parseDouble(askCommunicationResult.get());
-//
-//                if (askApplicationResult.isPresent())
-//                    applicationGrade = Double.parseDouble(askApplicationResult.get());
-//
-//                gradeIsNotDoubleOrNone = false;
-//
-//                // Create assignment for student
-//                s.addAssignment(this.c, assignmentName, knowledgeGrade, thinkingGrade, communicationGrade, applicationGrade, assignmentWeight);
-//
-//            } catch (NumberFormatException exception) {
-//                new Alert(Alert.AlertType.ERROR, String.format("%s; Please enter a number.", exception.getMessage())).showAndWait();
-//            }
-//        }
+        } catch (IOException exception) {
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -367,6 +305,8 @@ public class ClassController {
             for (Student s : this.c.students) {
                 this.askStudentAssignmentGrades(s, assignmentName, assignmentWeight);
             }
+
+            this.refreshWindow();
         }
     }
 

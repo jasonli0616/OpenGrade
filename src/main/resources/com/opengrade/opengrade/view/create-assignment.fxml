@@ -13,10 +13,33 @@
             id="body" alignment="TOP_CENTER">
     <stylesheets>
         <URL value="@../css/main.css"/>
+        <URL value="@../css/create-assignment-controller.css"/>
     </stylesheets>
 
-    <!-- TODO: Use window to input user grades -->
-
     <Label text="Create an assignment" styleClass="title" fx:id="title" alignment="CENTER"/>
+    <VBox alignment="CENTER">
+        <Label styleClass="p" fx:id="studentName"/>
+        <Label styleClass="p" fx:id="weightLabel"/>
+    </VBox>
+
+    <GridPane alignment="TOP_CENTER" id="createAssignmentGrid">
+        <Label text="Knowledge mark" styleClass="p" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <TextField fx:id="knowledgeMarkInput" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+        <Label text="\%" styleClass="p" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+
+        <Label text="Thinking mark" styleClass="p" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        <TextField fx:id="thinkingMarkInput" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+        <Label text="\%" styleClass="p" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+
+        <Label text="Communication mark" styleClass="p" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        <TextField fx:id="communicationMarkInput" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+        <Label text="\%" styleClass="p" GridPane.rowIndex="3" GridPane.columnIndex="3"/>
+
+        <Label text="Application mark" styleClass="p" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+        <TextField fx:id="applicationMarkInput" GridPane.rowIndex="4" GridPane.columnIndex="2"/>
+        <Label text="\%" styleClass="p" GridPane.rowIndex="4" GridPane.columnIndex="3"/>
+    </GridPane>
+
+    <Button text="Input grades" onAction="#handleInputGrades"/>
 
 </VBox>

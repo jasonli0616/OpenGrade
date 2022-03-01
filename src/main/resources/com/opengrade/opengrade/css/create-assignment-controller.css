@@ -1,0 +1,4 @@
+#createAssignmentGrid {
+    -fx-vgap: 10px;
+    -fx-hgap: 30px;
+}
