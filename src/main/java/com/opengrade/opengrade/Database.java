@@ -31,36 +31,40 @@ public class Database {
      * Create database tables, if they do not already exist.
      */
     public static void createTables() {
-        String classesTableQuery = "CREATE TABLE IF NOT EXISTS classes ("
-                + "                     id          INTEGER PRIMARY KEY,"
-                + "                     class_name  TEXT NOT NULL"
-                + "                 )";
+        String classesTableQuery =
+                "   CREATE TABLE IF NOT EXISTS classes ("
+                + "     id          INTEGER PRIMARY KEY,"
+                + "     class_name  TEXT NOT NULL"
+                + " )";
 
-        String studentsTableQuery = "CREATE TABLE IF NOT EXISTS students ("
-                + "                      id           INTEGER PRIMARY KEY,"
-                + "                      student_name TEXT NOT NULL"
-                + "                  )";
+        String studentsTableQuery =
+                "   CREATE TABLE IF NOT EXISTS students ("
+                + "     id           INTEGER PRIMARY KEY,"
+                + "     student_name TEXT NOT NULL"
+                + " )";
 
-        String associateStudentClassTableQuery = "CREATE TABLE IF NOT EXISTS associate_student_class ("
-                + "                                   student_id  INTEGER NOT NULL,"
-                + "                                   class_id    INTEGER NOT NULL,"
-                + "                                   FOREIGN KEY (student_id) REFERENCES students(id),"
-                + "                                   FOREIGN KEY (class_id) REFERENCES classes(id)"
-                + "                               )";
+        String associateStudentClassTableQuery =
+                "   CREATE TABLE IF NOT EXISTS associate_student_class ("
+                + "     student_id  INTEGER NOT NULL,"
+                + "     class_id    INTEGER NOT NULL,"
+                + "     FOREIGN KEY (student_id) REFERENCES students(id),"
+                + "     FOREIGN KEY (class_id) REFERENCES classes(id)"
+                + " )";
 
-        String assignmentsTableQuery = "CREATE TABLE IF NOT EXISTS assignments ("
-                + "                         id                  INTEGER PRIMARY KEY,"
-                + "                         assignment_name     TEXT NOT NULL,"
-                + "                         knowledge_mark      REAL,"
-                + "                         thinking_mark       REAL,"
-                + "                         communication_mark  REAL,"
-                + "                         application_mark    REAL,"
-                + "                         weight              REAL,"
-                + "                         student_id          INTEGER NOT NULL,"
-                + "                         class_id            INTEGER NOT NULL,"
-                + "                         FOREIGN KEY (student_id) REFERENCES students(id),"
-                + "                         FOREIGN KEY (class_id) REFERENCES classes(id)"
-                + "                     )";
+        String assignmentsTableQuery =
+                "   CREATE TABLE IF NOT EXISTS assignments ("
+                + "     id                  INTEGER PRIMARY KEY,"
+                + "     assignment_name     TEXT NOT NULL,"
+                + "     knowledge_mark      REAL,"
+                + "     thinking_mark       REAL,"
+                + "     communication_mark  REAL,"
+                + "     application_mark    REAL,"
+                + "     weight              REAL,"
+                + "     student_id          INTEGER NOT NULL,"
+                + "     class_id            INTEGER NOT NULL,"
+                + "     FOREIGN KEY (student_id) REFERENCES students(id),"
+                + "     FOREIGN KEY (class_id) REFERENCES classes(id)"
+                + " )";
 
         Connection conn = connect();
 
@@ -152,8 +156,9 @@ public class Database {
      * @param weight            the weight of the assignment
      */
     public static void insertStudentAssignment(Student student, Class c, String assignmentName, double knowledgeMark, double thinkingMark, double communicationMark, double applicationMark, double weight) {
-        String query = "INSERT INTO assignments (assignment_name, knowledge_mark, thinking_mark, communication_mark, application_mark, weight, student_id, class_id)"
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String query =
+                "   INSERT INTO assignments"
+                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         Connection conn = connect();
 
@@ -185,8 +190,9 @@ public class Database {
     public static ArrayList<HashMap<String, Object>> getStudentAssignments(Student student) {
         ArrayList<HashMap<String, Object>> assignments = new ArrayList<HashMap<String, Object>>();
 
-        String query = "SELECT * FROM assignments"
-                + "         WHERE student_id = ?";
+        String query =
+                "   SELECT * FROM assignments"
+                + "     WHERE student_id = ?";
 
         Connection conn = connect();
 
@@ -226,15 +232,18 @@ public class Database {
     public static ArrayList<Student> getStudentsFromClass(Class c) {
         ArrayList<Student> students = new ArrayList<Student>();
 
-        String getAssociationQuery = "SELECT * FROM associate_student_class"
-                + "                       WHERE class_id = ?";
+        String getAssociationQuery =
+                "   SELECT * FROM associate_student_class"
+                + "     WHERE class_id = ?";
 
-        String getStudentQuery = "SELECT * FROM students"
-                + "                   WHERE id = ?";
+        String getStudentQuery =
+                "   SELECT * FROM students"
+                + "     WHERE id = ?";
 
-        String getAssignmentQuery = "SELECT * FROM assignments"
-                + "                      WHERE student_id = ?"
-                + "                      AND class_id = ?";
+        String getAssignmentQuery =
+                "   SELECT * FROM assignments"
+                + "     WHERE student_id = ?"
+                + "     AND class_id = ?";
 
         Connection conn = connect();
 
@@ -322,7 +331,8 @@ public class Database {
      * @param c the class that the student will be inserted into
      */
     public static void associateStudentClass(Student s, Class c) {
-        String query = "INSERT INTO associate_student_class (student_id, class_id)"
+        String query =
+                "   INSERT INTO associate_student_class (student_id, class_id)"
                 + "     VALUES (?,?)";
 
         Connection conn = connect();
@@ -341,7 +351,8 @@ public class Database {
     }
 
     public static void unassociateStudentClass(Student s, Class c) {
-        String query = "DELETE FROM associate_student_class"
+        String query =
+                "   DELETE FROM associate_student_class"
                 + "     WHERE student_id = ?"
                 + "     AND class_id = ?";
 
@@ -367,7 +378,8 @@ public class Database {
      * @return the id of the class in the database
      */
     public static int insertClass(Class c) {
-        String query = "INSERT INTO classes (class_name)"
+        String query =
+                "   INSERT INTO classes (class_name)"
                 + "     VALUES (?)";
 
         Connection conn = connect();
@@ -395,11 +407,13 @@ public class Database {
     }
 
     public static void deleteClass(Class c) {
-        String deleteClassQuery = "DELETE FROM classes"
-                + "                    WHERE id = ?";
+        String deleteClassQuery =
+            "   DELETE FROM classes"
+            + "     WHERE id = ?";
 
-        String deleteAssociateStudentClassQuery = "DELETE FROM associate_student_class"
-                + "                                    WHERE class_id = ?";
+        String deleteAssociateStudentClassQuery =
+            "   DELETE FROM associate_student_class"
+            + "     WHERE class_id = ?";
 
         Connection conn = connect();
 
