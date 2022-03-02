@@ -5,7 +5,6 @@ import com.opengrade.opengrade.Main;
 import com.opengrade.opengrade.models.Class;
 import com.opengrade.opengrade.models.Student;
 import javafx.collections.ObservableList;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -16,7 +15,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Optional;
 
 public class ClassController {
@@ -172,8 +170,12 @@ public class ClassController {
         }
     }
 
-    @FXML
-    protected void addStudentAssignment() {
+    /**
+     * Show the create assignment dialog, and create assignments for students.
+     *
+     * @param students the students that will have this assignment
+     */
+    private void createAssignmentDialog(ArrayList<Student> students) {
         // Ask assignment name
         TextInputDialog askAssignmentName = new TextInputDialog();
         askAssignmentName.setTitle("Create assignment");
@@ -211,11 +213,32 @@ public class ClassController {
         if (assignmentNameResult.isPresent()) {
             String assignmentName = assignmentNameResult.get();
 
-            // Get each student's grade
-            Student s = this.getOneSelectedStudent();
-
-            this.askStudentAssignmentGrades(s, assignmentName, assignmentWeight);
+            // Get each student's grade and insert assignment
+            for (Student s : students) {
+                this.askStudentAssignmentGrades(s, assignmentName, assignmentWeight);
+            }
         }
+        this.refreshWindow();
+    }
+
+    /**
+     * Overloaded method to show create assignment dialog for only one student.
+     *
+     * @param s the student who will have this assignment
+     */
+    private void createAssignmentDialog(Student s) {
+        ArrayList<Student> students = new ArrayList<Student>();
+        students.add(s);
+        this.createAssignmentDialog(students);
+    }
+
+    /**
+     * Create assignment for one selected student.
+     */
+    @FXML
+    protected void addStudentAssignment() {
+        Student s = this.getOneSelectedStudent();
+        this.createAssignmentDialog(s);
     }
 
     /**
@@ -262,54 +285,19 @@ public class ClassController {
         return null;
     }
 
+    /**
+     * Create assignment for every student in the class.
+     */
     @FXML
     protected void handleCreateAssignmentButton() {
-        // Ask assignment name
-        TextInputDialog askAssignmentName = new TextInputDialog();
-        askAssignmentName.setTitle("Create assignment");
-        askAssignmentName.setHeaderText("Create assignment");
-        askAssignmentName.setContentText("What is the assignment name?");
-
-        Optional<String> assignmentNameResult = askAssignmentName.showAndWait();
-
-
-
-        // Ask assignment weight
-        // Use while loop to enforce number input
-        boolean weightIsNotDouble = true;
-        double assignmentWeight = 0;
-
-        while (weightIsNotDouble) {
-            TextInputDialog askAssignmentWeight = new TextInputDialog();
-            askAssignmentWeight.setTitle("Create assignment");
-            askAssignmentWeight.setHeaderText("Create assignment");
-            askAssignmentWeight.setContentText("What is the assignment weight?");
-
-            Optional<String> assignmentWeightResult = askAssignmentWeight.showAndWait();
-
-            // Get weight as double
-            if (assignmentWeightResult.isPresent()) {
-                try {
-                    assignmentWeight = Double.parseDouble(assignmentWeightResult.get());
-                    weightIsNotDouble = false;
-                } catch (NumberFormatException exception) {
-                    new Alert(Alert.AlertType.ERROR, String.format("%s; Please enter a number.", exception.getMessage())).showAndWait();
-                }
-            }
-        }
-
-        if (assignmentNameResult.isPresent()) {
-            String assignmentName = assignmentNameResult.get();
-
-            // Get each student's grade and insert assignment
-            for (Student s : this.c.students) {
-                this.askStudentAssignmentGrades(s, assignmentName, assignmentWeight);
-            }
-
-            this.refreshWindow();
-        }
+        this.createAssignmentDialog(this.c.students);
     }
 
+    /**
+     * Delete the class, and return to the homepage.
+     *
+     * @throws IOException
+     */
     @FXML
     protected void handleDeleteClassButton() throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, String.format("Are you sure you want to to delete %s? This action is non-recoverable.", this.c.className));
@@ -321,6 +309,12 @@ public class ClassController {
         }
     }
 
+    /**
+     * Returns to the previous page.
+     * Bound to the "back" button.
+     *
+     * @throws IOException
+     */
     @FXML
     protected void handleBackButton() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("view/main.fxml"));

@@ -364,7 +364,7 @@ public class Database {
      * Inserts a class into the database.
      *
      * @param c the class to insert
-     * @returns the id of the class in the database
+     * @return the id of the class in the database
      */
     public static int insertClass(Class c) {
         String query = "INSERT INTO classes (class_name)"
