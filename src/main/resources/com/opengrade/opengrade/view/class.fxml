@@ -36,11 +36,11 @@
         <VBox fx:id="studentsSection" id="studentsSection">
 
             <GridPane>
-                <VBox GridPane.columnIndex="1">
+                <VBox GridPane.columnIndex="1" alignment="CENTER">
                     <Label text="Student name" styleClass="p"/>
                     <ListView fx:id="studentsList" id="studentsList"/>
                 </VBox>
-                <VBox GridPane.columnIndex="2">
+                <VBox GridPane.columnIndex="2" alignment="CENTER">
                     <Label text="Average grade" styleClass="p"/>
                     <ListView fx:id="gradeList" id="studentsList"/>
                 </VBox>

@@ -10,11 +10,40 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.opengrade.opengrade.controllers.ViewStudentController"
-      id="body">
+      alignment="TOP_CENTER" id="body">
 
     <stylesheets>
         <URL value="@../css/main.css"/>
         <URL value="@../css/view-student.css"/>
     </stylesheets>
+
+    <Label styleClass="title" fx:id="title"/>
+
+    <GridPane alignment="CENTER">
+        <VBox GridPane.columnIndex="1" alignment="CENTER">
+            <Label text="Assignment" styleClass="p"/>
+            <ListView fx:id="assignmentList" id="studentsList"/>
+        </VBox>
+        <VBox GridPane.columnIndex="2" alignment="CENTER">
+            <Label text="Knowledge (20%)" styleClass="p"/>
+            <ListView fx:id="knowledgeList" id="studentsList"/>
+        </VBox>
+        <VBox GridPane.columnIndex="3" alignment="CENTER">
+            <Label text="Thinking (15%)" styleClass="p"/>
+            <ListView fx:id="thinkingList" id="studentsList"/>
+        </VBox>
+        <VBox GridPane.columnIndex="4" alignment="CENTER">
+            <Label text="Communication (25%)" styleClass="p"/>
+            <ListView fx:id="communicationList" id="studentsList"/>
+        </VBox>
+        <VBox GridPane.columnIndex="5" alignment="CENTER">
+            <Label text="Application (20%)" styleClass="p"/>
+            <ListView fx:id="applicationList" id="studentsList"/>
+        </VBox>
+        <VBox GridPane.columnIndex="6" alignment="CENTER">
+            <Label text="Weight" styleClass="p"/>
+            <ListView fx:id="weightList" id="studentsList"/>
+        </VBox>
+    </GridPane>
 
 </VBox>

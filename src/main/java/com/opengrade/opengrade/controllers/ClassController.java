@@ -63,12 +63,12 @@ public class ClassController {
 
             // Show view student screen
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("view/view-student.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 600, 600);
+            Scene scene = new Scene(fxmlLoader.load(), 800, 600);
             Stage stage = new Stage();
             stage.setTitle("View student: " + selectedStudent.fullName);
             stage.setScene(scene);
             ViewStudentController controller = fxmlLoader.getController();
-            controller.setStudent(selectedStudent);
+            controller.setStudent(selectedStudent, this.c);
             stage.showAndWait();
 
         } catch (InvalidParameterException exception) {
@@ -236,6 +236,8 @@ public class ClassController {
             }
         }
 
+        new Alert(Alert.AlertType.CONFIRMATION, "Assignment has been created.").showAndWait();
+
         this.refreshWindow();
     }
 
@@ -257,6 +259,8 @@ public class ClassController {
     protected void addStudentAssignment() {
         Student s = this.getOneSelectedStudent();
         this.createAssignmentDialog(s);
+        new Alert(Alert.AlertType.CONFIRMATION, "Assignment has been created.").showAndWait();
+        this.refreshWindow();
     }
 
     /**

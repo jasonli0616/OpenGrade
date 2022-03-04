@@ -2,3 +2,7 @@
     -fx-vgap: 10px;
     -fx-hgap: 30px;
 }
+
+#studentsList {
+    -fx-background-color: #131313;
+}
