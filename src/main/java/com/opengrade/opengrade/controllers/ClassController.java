@@ -40,8 +40,6 @@ public class ClassController {
         for (Student student : students) {
             // Add student to ListView
             studentsList.getItems().add(student.fullName);
-
-            Button viewStudentButton = new Button("View student");
         }
     }
 
@@ -60,6 +58,25 @@ public class ClassController {
      */
     @FXML
     protected void viewSelectedStudentAssignments() {
+        try {
+            Student selectedStudent = this.getOneSelectedStudent();
+
+            // Show view student screen
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("view/view-student.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 600, 600);
+            Stage stage = new Stage();
+            stage.setTitle("View student: " + selectedStudent.fullName);
+            stage.setScene(scene);
+            ViewStudentController controller = fxmlLoader.getController();
+            controller.setStudent(selectedStudent);
+            stage.showAndWait();
+
+        } catch (InvalidParameterException exception) {
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+        }
         // TODO:
         // * Calculate and retrieve student marks,
         // * Display window of marks
@@ -218,6 +235,7 @@ public class ClassController {
                 this.askStudentAssignmentGrades(s, assignmentName, assignmentWeight);
             }
         }
+
         this.refreshWindow();
     }
 
@@ -332,7 +350,7 @@ public class ClassController {
     private void refreshWindow() {
         try {
             Class.openClassGUI(c, (Stage) studentsList.getScene().getWindow());
-        } catch (IOException exception) {
+        } catch (Exception exception) {
             new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
             exception.printStackTrace();
         }

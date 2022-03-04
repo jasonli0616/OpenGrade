@@ -157,7 +157,7 @@ public class Database {
      */
     public static void insertStudentAssignment(Student student, Class c, String assignmentName, double knowledgeMark, double thinkingMark, double communicationMark, double applicationMark, double weight) {
         String query =
-                "   INSERT INTO assignments"
+                "   INSERT INTO assignments (assignment_name, knowledge_mark, thinking_mark, communication_mark, application_mark, weight, student_id, class_id)"
                 + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         Connection conn = connect();

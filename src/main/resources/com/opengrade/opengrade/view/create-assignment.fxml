@@ -10,7 +10,7 @@
             id="body" alignment="TOP_CENTER">
     <stylesheets>
         <URL value="@../css/main.css"/>
-        <URL value="@../css/create-assignment-controller.css"/>
+        <URL value="@../css/create-assignment.css"/>
     </stylesheets>
 
     <Label text="Create an assignment" styleClass="title" fx:id="title" alignment="CENTER"/>
