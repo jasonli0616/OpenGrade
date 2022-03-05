@@ -71,6 +71,8 @@ public class ClassController {
             controller.setStudent(selectedStudent, this.c);
             stage.showAndWait();
 
+            this.refreshWindow();
+
         } catch (InvalidParameterException exception) {
             new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
         } catch (IOException exception) {
@@ -80,30 +82,6 @@ public class ClassController {
         // TODO:
         // * Calculate and retrieve student marks,
         // * Display window of marks
-    }
-
-    /**
-     * Change the name of a student in the class.
-     */
-    @FXML
-    protected void editStudentName() {
-        try {
-            Student selectedStudent = this.getOneSelectedStudent();
-            // Show dialog to ask for new name
-            TextInputDialog askStudentName = new TextInputDialog();
-            askStudentName.setTitle("Edit student: " + selectedStudent.fullName);
-            askStudentName.setHeaderText("Edit student: " + selectedStudent.fullName);
-            askStudentName.setContentText("What is the student's new name?");
-
-            // If name is given, change name
-            Optional<String> result = askStudentName.showAndWait();
-            if (result.isPresent()) {
-                this.c.editStudentName(selectedStudent, result.get());
-                this.refreshWindow();
-            }
-        } catch (InvalidParameterException exception) {
-            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
-        }
     }
 
     /**
@@ -173,26 +151,12 @@ public class ClassController {
         this.refreshWindow();
     }
 
-    @FXML
-    protected void deleteStudent() {
-        try {
-            Student student = this.getOneSelectedStudent();
-
-            this.c.students.remove(student);
-            Database.unassociateStudentClass(student, this.c);
-
-            this.refreshWindow();
-        } catch (InvalidParameterException exception) {
-            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
-        }
-    }
-
     /**
      * Show the create assignment dialog, and create assignments for students.
      *
      * @param students the students that will have this assignment
      */
-    private void createAssignmentDialog(ArrayList<Student> students) {
+    public static void createAssignmentDialog(ArrayList<Student> students, Class c) {
         // Ask assignment name
         TextInputDialog askAssignmentName = new TextInputDialog();
         askAssignmentName.setTitle("Create assignment");
@@ -232,35 +196,11 @@ public class ClassController {
 
             // Get each student's grade and insert assignment
             for (Student s : students) {
-                this.askStudentAssignmentGrades(s, assignmentName, assignmentWeight);
+                askStudentAssignmentGrades(s, c, assignmentName, assignmentWeight);
             }
         }
 
         new Alert(Alert.AlertType.CONFIRMATION, "Assignment has been created.").showAndWait();
-
-        this.refreshWindow();
-    }
-
-    /**
-     * Overloaded method to show create assignment dialog for only one student.
-     *
-     * @param s the student who will have this assignment
-     */
-    private void createAssignmentDialog(Student s) {
-        ArrayList<Student> students = new ArrayList<Student>();
-        students.add(s);
-        this.createAssignmentDialog(students);
-    }
-
-    /**
-     * Create assignment for one selected student.
-     */
-    @FXML
-    protected void addStudentAssignment() {
-        Student s = this.getOneSelectedStudent();
-        this.createAssignmentDialog(s);
-        new Alert(Alert.AlertType.CONFIRMATION, "Assignment has been created.").showAndWait();
-        this.refreshWindow();
     }
 
     /**
@@ -268,7 +208,7 @@ public class ClassController {
      *
      * @param s the student who completed the assignment
      */
-    private void askStudentAssignmentGrades(Student s, String assignmentName, double assignmentWeight) {
+    public static void askStudentAssignmentGrades(Student s, Class c, String assignmentName, double assignmentWeight) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("view/create-assignment.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 600, 300);
@@ -276,7 +216,7 @@ public class ClassController {
             stage.setTitle("Create assignment: " + assignmentName);
             stage.setScene(scene);
             CreateAssignmentController controller = fxmlLoader.getController();
-            controller.setAssignment(s, assignmentName, assignmentWeight, this.c);
+            controller.setAssignment(s, assignmentName, assignmentWeight, c);
             stage.showAndWait();
 
         } catch (IOException exception) {
@@ -312,7 +252,8 @@ public class ClassController {
      */
     @FXML
     protected void handleCreateAssignmentButton() {
-        this.createAssignmentDialog(this.c.students);
+        createAssignmentDialog(this.c.students, this.c);
+        this.refreshWindow();
     }
 
     /**

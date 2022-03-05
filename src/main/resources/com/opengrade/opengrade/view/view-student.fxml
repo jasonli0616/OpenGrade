@@ -33,7 +33,7 @@
             <ListView fx:id="thinkingList" id="studentsList"/>
         </VBox>
         <VBox GridPane.columnIndex="4" alignment="CENTER">
-            <Label text="Communication (25%)" styleClass="p"/>
+            <Label text="Communication (15%)" styleClass="p"/>
             <ListView fx:id="communicationList" id="studentsList"/>
         </VBox>
         <VBox GridPane.columnIndex="5" alignment="CENTER">
@@ -45,5 +45,12 @@
             <ListView fx:id="weightList" id="studentsList"/>
         </VBox>
     </GridPane>
+
+    <Button onAction="#updateGrades" text="Update grades"/>
+    <HBox alignment="CENTER">
+        <Button onAction="#editName" text="Edit name"/>
+        <Button onAction="#createAssignment" text="Create assignment"/>
+        <Button onAction="#removeFromClass" text="Remove from class"/>
+    </HBox>
 
 </VBox>

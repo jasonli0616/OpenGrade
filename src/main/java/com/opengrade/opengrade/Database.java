@@ -143,6 +143,27 @@ public class Database {
         return 0;
     }
 
+    public static void removeStudentClassAssignments(Student student, Class c) {
+        String query =
+                "   DELETE FROM assignments"
+                + "     WHERE student_id = ?"
+                + "     AND class_id = ?";
+
+        Connection conn = connect();
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, student.id);
+            pstmt.setInt(2, c.id);
+            pstmt.executeUpdate();
+
+            conn.close();
+        } catch (SQLException exception) {
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+            exception.printStackTrace();
+        }
+    }
+
     /**
      * Insert an assignment into the database.
      *
@@ -406,6 +427,11 @@ public class Database {
         return 0;
     }
 
+    /**
+     * Delete the class from the database.
+     *
+     * @param c the class to delete
+     */
     public static void deleteClass(Class c) {
         String deleteClassQuery =
             "   DELETE FROM classes"
