@@ -112,6 +112,9 @@ public class ViewStudentController {
 
             // If assignment name has been changed to blank, remove assignment
             if (assignmentName.isEmpty()) {
+                if (assignmentNames.size() <= 1)
+                    this.student.assignments = assignments;
+
                 continue;
             }
 
@@ -140,11 +143,12 @@ public class ViewStudentController {
 
                 this.student.assignments = assignments;
 
-
             } catch (NumberFormatException exception) {
                 new Alert(Alert.AlertType.ERROR, String.format("%s; Enter a number between 0 and 100; or \"-\" for null.", exception.getMessage())).showAndWait();
                 return;
             }
+
+            new Alert(Alert.AlertType.CONFIRMATION, "Assignments have been updated").showAndWait();
         }
 
         // Overwrite all assignment entries in database with new assignment marks
