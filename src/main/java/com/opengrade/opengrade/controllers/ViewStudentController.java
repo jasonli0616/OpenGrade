@@ -110,6 +110,11 @@ public class ViewStudentController {
             String applicationMarkString = applicationMarkList.get(assignmentIndex);
             String weightString = assignmentWeightList.get(assignmentIndex);
 
+            // If assignment name has been changed to blank, remove assignment
+            if (assignmentName.isEmpty()) {
+                continue;
+            }
+
             try {
                 double knowledgeMark = knowledgeMarkString.equals("-") ? -1 : Double.parseDouble(knowledgeMarkString);
                 double thinkingMark = thinkingMarkString.equals("-") ? -1 : Double.parseDouble(thinkingMarkString);
@@ -123,6 +128,7 @@ public class ViewStudentController {
                 }
 
                 HashMap<String, Object> assignment = new HashMap<String, Object>();
+                assignment.put(AssignmentAttribute.CLASS_ID.attribute, this.c.id);
                 assignment.put(AssignmentAttribute.ASSIGNMENT_NAME.attribute, assignmentName);
                 assignment.put(AssignmentAttribute.KNOWLEDGE_MARK.attribute, knowledgeMark);
                 assignment.put(AssignmentAttribute.THINKING_MARK.attribute, thinkingMark);
@@ -154,6 +160,8 @@ public class ViewStudentController {
 
             Database.insertStudentAssignment(this.student, this.c, assignmentName, knowledgeMark, thinkingMark, communicationMark, applicationMark, weight);
         }
+
+        this.showLists();
 
     }
 

@@ -47,6 +47,7 @@ public class Student {
         assignment.put(AssignmentAttribute.THINKING_MARK.attribute, thinkingMark);
         assignment.put(AssignmentAttribute.COMMUNICATION_MARK.attribute, communicationMark);
         assignment.put(AssignmentAttribute.APPLICATION_MARK.attribute, applicationMark);
+        assignment.put(AssignmentAttribute.WEIGHT.attribute, weight);
 
         this.assignments.add(assignment);
 

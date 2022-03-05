@@ -46,6 +46,12 @@
         </VBox>
     </GridPane>
 
+    <VBox alignment="CENTER">
+        <Label text="To edit an assignment: Double click to edit, and press enter to save." styleClass="p"/>
+        <Label text="To remove an assignment: Change assignment name to blank." styleClass="p"/>
+        <Label text="To save your changes, press update button below." styleClass="p"/>
+    </VBox>
+
     <Button onAction="#updateGrades" text="Update grades"/>
     <HBox alignment="CENTER">
         <Button onAction="#editName" text="Edit name"/>
