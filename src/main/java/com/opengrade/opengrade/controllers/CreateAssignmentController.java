@@ -60,12 +60,21 @@ public class CreateAssignmentController {
             if (applicationMarkInput.getText().isEmpty()) applicationMark = -1;
             else applicationMark = Double.parseDouble(applicationMarkInput.getText());
 
+            // Make sure marks are valid entries
+            if (!markIsValid(knowledgeMark) || !markIsValid(thinkingMark) || !markIsValid(communicationMark) || !markIsValid(applicationMark)) {
+                throw new NumberFormatException("Out of bounds");
+            }
+
             this.student.addAssignment(this.c, this.assignmentName, knowledgeMark, thinkingMark, communicationMark, applicationMark, this.assignmentWeight);
 
             ((Stage) this.title.getScene().getWindow()).close();
         } catch (NumberFormatException exception) {
             new Alert(Alert.AlertType.ERROR, "Please input numbers only, or leave blank.").showAndWait();
         }
+    }
+
+    private boolean markIsValid(double mark) {
+        return (mark >= -1 && mark <= 100);
     }
 
     /**

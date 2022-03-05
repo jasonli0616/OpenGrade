@@ -118,7 +118,7 @@ public class ViewStudentController {
                 double assignmentWeight = Double.parseDouble(weightString);
 
                 // Make sure marks are valid entries
-                if (!markIsValid(knowledgeMark) || !markIsValid(thinkingMark) || !markIsValid(communicationMark) || !markIsValid(applicationMark) || !(assignmentWeight >= 0 || assignmentWeight <= 100)) {
+                if (!markIsValid(knowledgeMark) || !markIsValid(thinkingMark) || !markIsValid(communicationMark) || !markIsValid(applicationMark)) {
                     throw new NumberFormatException("Out of bounds");
                 }
 
