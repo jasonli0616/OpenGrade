@@ -19,7 +19,8 @@ public class Database {
     public static Connection connect() {
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection("jdbc:sqlite:site.db");
+            String connectionPath = String.format("jdbc:sqlite:%s/.opengrade.db", System.getProperty("user.home"));
+            conn = DriverManager.getConnection(connectionPath);
         } catch (SQLException exception) {
             new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
             exception.printStackTrace();
