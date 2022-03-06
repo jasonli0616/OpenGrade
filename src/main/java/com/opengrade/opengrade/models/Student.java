@@ -114,11 +114,33 @@ public class Student {
         ) / 70;
     }
 
+    /**
+     * Change the name of the student,
+     * as the object and in the database.
+     *
+     * @param newName the student's new name
+     */
+    public void changeName(String newName) {
+        this.fullName = newName;
+        Database.editStudentName(this, newName);
+    }
+
+    /**
+     * Student toString() will return the name of the student.
+     *
+     * @return the student's name
+     */
     @Override
     public String toString() {
         return this.fullName;
     }
 
+    /**
+     * Check if two students are the same, using the SQL id.
+     *
+     * @param o the other student
+     * @return whether they are the same student
+     */
     @Override
     public boolean equals(Object o) {
         try {

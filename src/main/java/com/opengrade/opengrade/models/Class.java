@@ -40,13 +40,14 @@ public class Class {
         this.students.add(newStudent);
     }
 
-    public void editStudentName(Student student, String newName) {
-        student.fullName = newName;
-    }
-
+    /**
+     * Remove a student from the class.
+     *
+     * @param student the student to remove
+     */
     public void removeStudent(Student student) {
         this.students.remove(student);
-        Database.insertClass(this);
+        Database.unassociateStudentClass(student, this);
     }
 
 

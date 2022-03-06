@@ -184,7 +184,7 @@ public class ViewStudentController {
             // If name is given, change name
             Optional<String> result = askStudentName.showAndWait();
             if (result.isPresent()) {
-                this.c.editStudentName(this.student, result.get());
+                this.student.changeName(result.get());
 
                 this.title.setText(String.format("%s - %s", result.get(), c.className));
             }
@@ -199,8 +199,7 @@ public class ViewStudentController {
     @FXML
     protected void removeFromClass() {
         try {
-            this.c.students.remove(this.student);
-            Database.unassociateStudentClass(this.student, this.c);
+            this.c.removeStudent(this.student);
             ((Stage) title.getScene().getWindow()).close();
 
         } catch (InvalidParameterException exception) {

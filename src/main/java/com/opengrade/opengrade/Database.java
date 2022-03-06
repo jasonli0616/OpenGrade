@@ -146,6 +146,33 @@ public class Database {
     }
 
     /**
+     * Change a student's name in the database.
+     *
+     * @param student the student whose name has changed
+     * @param newName the student's new name
+     */
+    public static void editStudentName(Student student, String newName) {
+        String query =
+                "   UPDATE students"
+                + " SET student_name = ?"
+                + " WHERE id = ?";
+
+        Connection conn = connect();
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, newName);
+            pstmt.setInt(2, student.id);
+            pstmt.executeUpdate();
+
+            conn.close();
+        } catch (SQLException exception) {
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+            exception.printStackTrace();
+        }
+    }
+
+    /**
      * Remove all assignments from a student in a class.
      * This method will be called when updating a student's marks,
      * to overwrite all data.
