@@ -119,10 +119,12 @@ public class ViewStudentController {
             }
 
             try {
-                double knowledgeMark = knowledgeMarkString.equals("-") ? -1 : Double.parseDouble(knowledgeMarkString);
-                double thinkingMark = thinkingMarkString.equals("-") ? -1 : Double.parseDouble(thinkingMarkString);
-                double communicationMark = communicationMarkString.equals("-") ? -1 : Double.parseDouble(communicationMarkString);
-                double applicationMark = applicationMarkString.equals("-") ? -1 : Double.parseDouble(applicationMarkString);
+                // Get marks from view inputs
+                // If mark is "-" or blank, ignore
+                double knowledgeMark = knowledgeMarkString.equals("-") || applicationMarkString.isEmpty() ? -1 : Double.parseDouble(knowledgeMarkString);
+                double thinkingMark = thinkingMarkString.equals("-") || applicationMarkString.isEmpty() ? -1 : Double.parseDouble(thinkingMarkString);
+                double communicationMark = communicationMarkString.equals("-") || applicationMarkString.isEmpty() ? -1 : Double.parseDouble(communicationMarkString);
+                double applicationMark = applicationMarkString.equals("-") || applicationMarkString.isEmpty() ? -1 : Double.parseDouble(applicationMarkString);
                 double assignmentWeight = Double.parseDouble(weightString);
 
                 // Make sure marks are valid entries
