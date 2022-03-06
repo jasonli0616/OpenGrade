@@ -5,9 +5,7 @@ import com.opengrade.opengrade.models.Class;
 import com.opengrade.opengrade.models.Student;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;

@@ -2,7 +2,6 @@ package com.opengrade.opengrade.models;
 
 import com.opengrade.opengrade.Database;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -55,16 +54,12 @@ public class Student {
     }
 
     /**
-     * Remove the assignment from the student
-     * This method should only be called when removing an assignment for the entire class,
-     * not for an individual student.
+     * Return the student's average in a class, for a subject strand.
      *
-     * @param assignment the assignment to remove from the student
+     * @param c      the class that the student is in
+     * @param strand the strand to calculate
+     * @return the student's average in a strand
      */
-    public void removeAssignment(String assignment) {
-        // TODO
-    }
-
     public double getStrandAverage(Class c, AssignmentAttribute strand) {
         double average = 0;
 
