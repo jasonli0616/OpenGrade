@@ -1,6 +1,12 @@
 package com.opengrade.opengrade.models;
 
 public enum AssignmentAttribute {
+    /**
+     * This enum is essentially just a holder for
+     * constant strings that are used for the assignment
+     * attributes.
+     */
+
     ASSIGNMENT_NAME ("assignment_name"),
     KNOWLEDGE_MARK ("knowledge_mark"),
     THINKING_MARK ("thinking_mark"),

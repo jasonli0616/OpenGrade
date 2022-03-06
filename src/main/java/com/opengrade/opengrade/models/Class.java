@@ -50,7 +50,9 @@ public class Class {
         Database.unassociateStudentClass(student, this);
     }
 
-
+    /**
+     * Remove the class from the database.
+     */
     public void deleteClass() {
         Database.deleteClass(this);
     }
@@ -58,7 +60,7 @@ public class Class {
     /**
      * Open a class in the window.
      *
-     * @param c the class to open
+     * @param c     the class to open
      * @param stage the stage to open the class in
      * @throws IOException
      */
@@ -72,6 +74,11 @@ public class Class {
         controller.setClass(c);
     }
 
+    /**
+     * Class toString() will return the name of the class.
+     *
+     * @return the name of the class
+     */
     @Override
     public String toString() {
         return this.className;

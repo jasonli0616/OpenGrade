@@ -75,6 +75,8 @@ public class ViewStudentController {
             weightList.getItems().add(String.format("%.2f", (Double) assignment.get(AssignmentAttribute.WEIGHT.attribute)));
         }
 
+        // Make lists editable
+
         assignmentList.setEditable(true);
         knowledgeList.setEditable(true);
         thinkingList.setEditable(true);
@@ -91,6 +93,9 @@ public class ViewStudentController {
 
     }
 
+    /**
+     * Get all grades from the screen, and overwrite database grades data.
+     */
     @FXML
     protected void updateGrades() {
         ArrayList<HashMap<String, Object>> assignments = new ArrayList<HashMap<String, Object>>();
@@ -221,12 +226,21 @@ public class ViewStudentController {
         this.showLists();
     }
 
+    /**
+     * Puts components to the window/edit components on the window
+     */
     private void drawWindow() {
         this.title.setText(String.format("%s - %s", student.fullName, c.className));
 
         this.showLists();
     }
 
+    /**
+     * Set the student and class for the window
+     *
+     * @param s the student to set
+     * @param c the class to set
+     */
     public void setStudent(Student s, Class c) {
         this.student = s;
         this.c = c;

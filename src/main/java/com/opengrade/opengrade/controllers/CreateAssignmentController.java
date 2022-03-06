@@ -1,5 +1,6 @@
 package com.opengrade.opengrade.controllers;
 
+import com.opengrade.opengrade.models.AssignmentAttribute;
 import com.opengrade.opengrade.models.Class;
 import com.opengrade.opengrade.models.Student;
 import javafx.fxml.FXML;
@@ -38,6 +39,9 @@ public class CreateAssignmentController {
     @FXML
     private TextField applicationMarkInput;
 
+    /**
+     * Get grades from the window input, and create the assignment for the student.
+     */
     @FXML
     protected void handleInputGrades() {
         try {

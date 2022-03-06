@@ -85,7 +85,7 @@ public class CreateClassController {
     }
 
     /**
-     *
+     * Remove a selected student from the class.
      */
     @FXML
     protected void removeSelectedStudent() {
