@@ -27,6 +27,7 @@ public class Main extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 600, 400);
         stage.setTitle("OpenGrade");
         stage.setScene(scene);
+        stage.centerOnScreen();
         stage.show();
     }
 }

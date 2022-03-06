@@ -1,6 +1,7 @@
 package com.opengrade.opengrade.controllers;
 
 import com.opengrade.opengrade.Database;
+import com.opengrade.opengrade.Main;
 import com.opengrade.opengrade.models.Class;
 import com.opengrade.opengrade.models.Student;
 import javafx.collections.ObservableList;
@@ -120,6 +121,12 @@ public class CreateClassController {
 
             Class.openClassGUI(c, (Stage) classNameInput.getScene().getWindow());
         }
+    }
+
+    @FXML
+    protected void handleBackButton() throws IOException {
+        Stage stage = (Stage) this.addedStudentsList.getScene().getWindow();
+        new Main().start(stage);
     }
 
 }

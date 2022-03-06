@@ -12,6 +12,10 @@
         <URL value="@../css/create-class.css"/>
     </stylesheets>
 
+    <top>
+        <Button text="Back" onAction="#handleBackButton"/>
+    </top>
+
     <center>
         <VBox alignment="TOP_CENTER">
             <Label styleClass="title" text="Create a new class"/>

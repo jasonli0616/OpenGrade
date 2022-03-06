@@ -280,13 +280,8 @@ public class ClassController {
      */
     @FXML
     protected void handleBackButton() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("view/main.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
         Stage stage = (Stage) studentsSection.getScene().getWindow();
-        stage.setTitle("OpenGrade");
-        stage.setScene(scene);
-        stage.show();
-        stage.centerOnScreen();
+        new Main().start(stage);
     }
 
     /**
