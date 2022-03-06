@@ -126,7 +126,7 @@ public class ViewStudentController {
                 double assignmentWeight = Double.parseDouble(weightString);
 
                 // Make sure marks are valid entries
-                if (!markIsValid(knowledgeMark) || !markIsValid(thinkingMark) || !markIsValid(communicationMark) || !markIsValid(applicationMark)) {
+                if (AssignmentAttribute.markIsValid(knowledgeMark) || AssignmentAttribute.markIsValid(thinkingMark) || AssignmentAttribute.markIsValid(communicationMark) || AssignmentAttribute.markIsValid(applicationMark)) {
                     throw new NumberFormatException("Out of bounds");
                 }
 
@@ -217,10 +217,6 @@ public class ViewStudentController {
         ClassController.createAssignmentDialog(students, this.c);
 
         this.showLists();
-    }
-
-    private boolean markIsValid(double mark) {
-        return (mark >= -1 && mark <= 100);
     }
 
     private void drawWindow() {

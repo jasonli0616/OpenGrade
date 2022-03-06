@@ -15,4 +15,16 @@ public enum AssignmentAttribute {
     AssignmentAttribute(String attribute) {
         this.attribute = attribute;
     }
+
+    /**
+     * Check if a mark is a valid input.
+     * -1 to 100
+     * -1 represents no mark
+     *
+     * @param mark the mark input
+     * @return whether the mark is valid
+     */
+    public static boolean markIsValid(double mark) {
+        return (mark >= -1 && mark <= 100);
+    }
 }

@@ -61,7 +61,7 @@ public class CreateAssignmentController {
             else applicationMark = Double.parseDouble(applicationMarkInput.getText());
 
             // Make sure marks are valid entries
-            if (!markIsValid(knowledgeMark) || !markIsValid(thinkingMark) || !markIsValid(communicationMark) || !markIsValid(applicationMark)) {
+            if (!AssignmentAttribute.markIsValid(knowledgeMark) || AssignmentAttribute.markIsValid(thinkingMark) || AssignmentAttribute.markIsValid(communicationMark) || AssignmentAttribute.markIsValid(applicationMark)) {
                 throw new NumberFormatException("Out of bounds");
             }
 
@@ -71,10 +71,6 @@ public class CreateAssignmentController {
         } catch (NumberFormatException exception) {
             new Alert(Alert.AlertType.ERROR, "Please input numbers only, or leave blank.").showAndWait();
         }
-    }
-
-    private boolean markIsValid(double mark) {
-        return (mark >= -1 && mark <= 100);
     }
 
     /**
