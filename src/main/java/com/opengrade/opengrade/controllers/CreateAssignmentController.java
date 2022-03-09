@@ -73,7 +73,7 @@ public class CreateAssignmentController {
 
             ((Stage) this.title.getScene().getWindow()).close();
         } catch (NumberFormatException exception) {
-            new Alert(Alert.AlertType.ERROR, "Please enter numbers between 0 to 100 only, or leave blank.").showAndWait();
+            new Alert(Alert.AlertType.ERROR, "Please enter numbers between 0 - 100, or leave blank.").showAndWait();
         }
     }
 

@@ -2,6 +2,7 @@ package com.opengrade.opengrade.controllers;
 
 import com.opengrade.opengrade.Database;
 import com.opengrade.opengrade.Main;
+import com.opengrade.opengrade.models.AssignmentAttribute;
 import com.opengrade.opengrade.models.Class;
 import com.opengrade.opengrade.models.Student;
 import javafx.collections.ObservableList;
@@ -48,7 +49,8 @@ public class ClassController {
      */
     private void showGradeList() {
         for (Student student : this.c.students) {
-            gradeList.getItems().add(String.format("%.2f%%", student.getAverage(this.c)));
+            double average = student.getAverage(this.c);
+            gradeList.getItems().add((average == -1) || (Double.isNaN(average)) ? "-" : String.format("%.2f", average));
         }
     }
 
@@ -165,42 +167,45 @@ public class ClassController {
 
         Optional<String> assignmentNameResult = askAssignmentName.showAndWait();
 
-
-
-        // Ask assignment weight
-        // Use while loop to enforce number input
-        boolean weightIsNotDouble = true;
-        double assignmentWeight = 0;
-
-        while (weightIsNotDouble) {
-            TextInputDialog askAssignmentWeight = new TextInputDialog();
-            askAssignmentWeight.setTitle("Create assignment");
-            askAssignmentWeight.setHeaderText("Create assignment");
-            askAssignmentWeight.setContentText("What is the assignment weight?");
-
-            Optional<String> assignmentWeightResult = askAssignmentWeight.showAndWait();
-
-            // Get weight as double
-            if (assignmentWeightResult.isPresent()) {
-                try {
-                    assignmentWeight = Double.parseDouble(assignmentWeightResult.get());
-                    weightIsNotDouble = false;
-                } catch (NumberFormatException exception) {
-                    new Alert(Alert.AlertType.ERROR, String.format("%s; Please enter a number.", exception.getMessage())).showAndWait();
-                }
-            }
-        }
-
         if (assignmentNameResult.isPresent()) {
+
+            // Ask assignment weight
+            // Use while loop to enforce number input
+            boolean weightIsNotDouble = true;
+            double assignmentWeight = 0;
+
+            while (weightIsNotDouble) {
+                TextInputDialog askAssignmentWeight = new TextInputDialog();
+                askAssignmentWeight.setTitle("Create assignment");
+                askAssignmentWeight.setHeaderText("Create assignment");
+                askAssignmentWeight.setContentText("What is the assignment weight?");
+
+                Optional<String> assignmentWeightResult = askAssignmentWeight.showAndWait();
+
+                // Get weight as double
+                if (assignmentWeightResult.isPresent()) {
+                    try {
+                        assignmentWeight = Double.parseDouble(assignmentWeightResult.get());
+
+                        if (!AssignmentAttribute.markIsValid(assignmentWeight))
+                            throw new NumberFormatException();
+
+                        weightIsNotDouble = false;
+                    } catch (NumberFormatException exception) {
+                        new Alert(Alert.AlertType.ERROR, "Please enter a weight between 0 - 100.").showAndWait();
+                    }
+                } else return;
+            }
+
             String assignmentName = assignmentNameResult.get();
 
             // Get each student's grade and insert assignment
             for (Student s : students) {
                 askStudentAssignmentGrades(s, c, assignmentName, assignmentWeight);
             }
-        }
 
-        new Alert(Alert.AlertType.CONFIRMATION, "Assignment has been created.").showAndWait();
+            new Alert(Alert.AlertType.CONFIRMATION, "Assignment has been created.").showAndWait();
+        }
     }
 
     /**

@@ -420,18 +420,27 @@ public class Database {
      * @param c the class to remove the student from
      */
     public static void unassociateStudentClass(Student s, Class c) {
-        String query =
+        String unassociateStudentClassQuery =
                 "   DELETE FROM associate_student_class"
+                + " WHERE student_id = ?"
+                + " AND class_id = ?";
+
+        String deleteAssignmentsQuery =
+                "   DELETE FROM assignments"
                 + " WHERE student_id = ?"
                 + " AND class_id = ?";
 
         Connection conn = connect();
 
         try {
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, s.id);
-            pstmt.setInt(2, c.id);
-            pstmt.executeUpdate();
+            PreparedStatement unassociateStudentClassPstmt = conn.prepareStatement(unassociateStudentClassQuery);
+            PreparedStatement deleteAssignmentsPstmt = conn.prepareStatement(deleteAssignmentsQuery);
+            unassociateStudentClassPstmt.setInt(1, s.id);
+            unassociateStudentClassPstmt.setInt(2, c.id);
+            unassociateStudentClassPstmt.executeUpdate();
+            deleteAssignmentsPstmt.setInt(1, s.id);
+            deleteAssignmentsPstmt.setInt(2, c.id);
+            deleteAssignmentsPstmt.executeUpdate();
 
             conn.close();
         } catch (SQLException exception) {
@@ -489,15 +498,22 @@ public class Database {
                 "   DELETE FROM associate_student_class"
                 + " WHERE class_id = ?";
 
+        String deleteAssignmentsQuery =
+                "   DELETE FROM assignments"
+                + " WHERE class_id = ?";
+
         Connection conn = connect();
 
         try {
             PreparedStatement deleteClassPstmt = conn.prepareStatement(deleteClassQuery);
             PreparedStatement deleteAssociateStudentClassPstmt = conn.prepareStatement(deleteAssociateStudentClassQuery);
+            PreparedStatement deleteAssignmentsPstmt = conn.prepareStatement(deleteAssignmentsQuery);
             deleteClassPstmt.setInt(1, c.id);
-            deleteAssociateStudentClassPstmt.setInt(1, c.id);
             deleteClassPstmt.executeUpdate();
+            deleteAssociateStudentClassPstmt.setInt(1, c.id);
             deleteAssociateStudentClassPstmt.executeUpdate();
+            deleteAssignmentsPstmt.setInt(1, c.id);
+            deleteAssignmentsPstmt.executeUpdate();
 
             conn.close();
         } catch (SQLException exception) {

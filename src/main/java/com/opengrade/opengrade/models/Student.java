@@ -61,7 +61,7 @@ public class Student {
      * @return the student's average in a strand
      */
     public double getStrandAverage(Class c, AssignmentAttribute strand) {
-        double average = 0;
+        double average = -1;
 
         double assignmentsTotalWeight = 0;
 
@@ -79,19 +79,16 @@ public class Student {
                 // Get mark
                 if ((double) assignment.get(strand.attribute) > 0) {
                     double assignmentStrand = (double) assignment.get(strand.attribute);
-                    average += assignmentStrand * assignmentWeight;
+                    average = assignmentStrand * assignmentWeight;
                 }
             }
         }
 
         // Adjust with total weight of assignments
-        average /= assignmentsTotalWeight;
+        if (average != -1)
+            average /= assignmentsTotalWeight;
 
-        return switch (strand) {
-            case KNOWLEDGE_MARK, APPLICATION_MARK -> average * 20;
-            case THINKING_MARK, COMMUNICATION_MARK -> average * 15;
-            default -> 0;
-        };
+        return average;
     }
 
     /**
@@ -105,13 +102,58 @@ public class Student {
      * @return  the average mark
      */
     public double getAverage(Class c) {
+        double knowledgeAverage = this.getStrandAverage(c, AssignmentAttribute.KNOWLEDGE_MARK);
+        double thinkingAverage = this.getStrandAverage(c, AssignmentAttribute.THINKING_MARK);
+        double communicationMark = this.getStrandAverage(c, AssignmentAttribute.COMMUNICATION_MARK);
+        double applicationMark = this.getStrandAverage(c, AssignmentAttribute.APPLICATION_MARK);
+
+        return getAverage(knowledgeAverage, thinkingAverage, communicationMark, applicationMark);
+    }
+
+    /**
+     * Static method to get the average of K, T, C, A.
+     * Knowledge- 20
+     * Thinking- 15
+     * Communication- 15
+     * Application- 20
+     *
+     *
+     * @param knowledge     knowledge mark of the assignment
+     * @param thinking      thinking mark of the assignment
+     * @param communication communication mark of the assignment
+     * @param application   application mark of the assignment
+     * @return the calculated and weighted strand average
+     */
+    public static double getAverage(double knowledge, double thinking, double communication, double application) {
+        double strandWeights = 0;
+
+        if (knowledge > -1)
+            strandWeights += 20;
+        else
+            knowledge = 0;
+
+        if (thinking > -1)
+            strandWeights += 15;
+        else
+            thinking = 0;
+
+        if (communication > -1)
+            strandWeights += 15;
+        else
+            communication = 0;
+
+        if (application > -1)
+            strandWeights += 20;
+        else
+            application = 0;
+
+        if (strandWeights == 0)
+            return -1;
+
         // Return the average from all strands
         return (
-            this.getStrandAverage(c, AssignmentAttribute.KNOWLEDGE_MARK)
-                + this.getStrandAverage(c, AssignmentAttribute.THINKING_MARK)
-                + this.getStrandAverage(c, AssignmentAttribute.COMMUNICATION_MARK)
-                + this.getStrandAverage(c, AssignmentAttribute.APPLICATION_MARK)
-        ) / 70;
+                (knowledge * 20) + (thinking * 15) + (communication * 15) + (application * 20)
+        ) / strandWeights;
     }
 
     /**

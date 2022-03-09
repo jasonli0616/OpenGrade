@@ -44,6 +44,9 @@ public class ViewStudentController {
     @FXML
     private ListView<String> weightList;
 
+    @FXML
+    private ListView<String> averageList;
+
     /**
      * Show the lists of student assignments on the screen.
      */
@@ -56,6 +59,7 @@ public class ViewStudentController {
         communicationList.getItems().clear();
         applicationList.getItems().clear();
         weightList.getItems().clear();
+        averageList.getItems().clear();
 
         for (HashMap<String, Object> assignment : this.student.assignments) {
 
@@ -65,12 +69,13 @@ public class ViewStudentController {
             double thinkingMark = (Double) assignment.get(AssignmentAttribute.THINKING_MARK.attribute);
             double communicationMark = (Double) assignment.get(AssignmentAttribute.COMMUNICATION_MARK.attribute);
             double applicationMark = (Double) assignment.get(AssignmentAttribute.APPLICATION_MARK.attribute);
-
+            double averageMark = Student.getAverage(knowledgeMark, thinkingMark, communicationMark, applicationMark);
 
             knowledgeList.getItems().add(knowledgeMark == -1 ? "-" : String.format("%.2f", knowledgeMark));
             thinkingList.getItems().add(thinkingMark == -1 ? "-" : String.format("%.2f", thinkingMark));
             communicationList.getItems().add(communicationMark == -1 ? "-" : String.format("%.2f", communicationMark));
             applicationList.getItems().add(applicationMark == -1 ? "-" : String.format("%.2f", applicationMark));
+            averageList.getItems().add(averageMark == -1 ? "-" : String.format("%.2f", averageMark));
 
             weightList.getItems().add(String.format("%.2f", (Double) assignment.get(AssignmentAttribute.WEIGHT.attribute)));
         }
@@ -126,14 +131,14 @@ public class ViewStudentController {
             try {
                 // Get marks from view inputs
                 // If mark is "-" or blank, ignore
-                double knowledgeMark = knowledgeMarkString.equals("-") || applicationMarkString.isEmpty() ? -1 : Double.parseDouble(knowledgeMarkString);
-                double thinkingMark = thinkingMarkString.equals("-") || applicationMarkString.isEmpty() ? -1 : Double.parseDouble(thinkingMarkString);
-                double communicationMark = communicationMarkString.equals("-") || applicationMarkString.isEmpty() ? -1 : Double.parseDouble(communicationMarkString);
+                double knowledgeMark = knowledgeMarkString.equals("-") || knowledgeMarkList.isEmpty() ? -1 : Double.parseDouble(knowledgeMarkString);
+                double thinkingMark = thinkingMarkString.equals("-") || thinkingMarkList.isEmpty() ? -1 : Double.parseDouble(thinkingMarkString);
+                double communicationMark = communicationMarkString.equals("-") || communicationMarkList.isEmpty() ? -1 : Double.parseDouble(communicationMarkString);
                 double applicationMark = applicationMarkString.equals("-") || applicationMarkString.isEmpty() ? -1 : Double.parseDouble(applicationMarkString);
                 double assignmentWeight = Double.parseDouble(weightString);
 
                 // Make sure marks are valid entries
-                if (AssignmentAttribute.markIsValid(knowledgeMark) || AssignmentAttribute.markIsValid(thinkingMark) || AssignmentAttribute.markIsValid(communicationMark) || AssignmentAttribute.markIsValid(applicationMark)) {
+                if (!AssignmentAttribute.markIsValid(knowledgeMark) || !AssignmentAttribute.markIsValid(thinkingMark) || !AssignmentAttribute.markIsValid(communicationMark) || !AssignmentAttribute.markIsValid(applicationMark)) {
                     throw new NumberFormatException("Out of bounds");
                 }
 
