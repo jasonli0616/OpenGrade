@@ -6,15 +6,20 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class Main extends Application {
+    public static void main(String[] args) {
+        // Create tables (if not exists) on app launch
+        Database.createTables();
+
+        launch();
+    }
+
     /**
-     * Main app method
-     * Handles stage
+     * Shows the welcome view.
      *
-     * @param stage The stage of the application
-     * @throws IOException
+     * @param stage the stage of the application
+     * @throws IOException JavaFX error
      */
     @Override
     public void start(Stage stage) throws IOException {
@@ -22,13 +27,7 @@ public class Main extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 600, 400);
         stage.setTitle("OpenGrade");
         stage.setScene(scene);
+        stage.centerOnScreen();
         stage.show();
-    }
-
-    public static void main(String[] args) {
-        // Create tables (if not exists) on app launch
-        Database.createTables();
-
-        launch();
     }
 }

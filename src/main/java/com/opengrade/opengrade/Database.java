@@ -12,7 +12,8 @@ import java.util.HashMap;
 public class Database {
 
     /**
-     * Connects (and create if not exists) to and returns the database.
+     * Connect to the database.
+     * Create the database if it does not exist.
      *
      * @return the database itself
      */
@@ -79,7 +80,6 @@ public class Database {
 
             conn.close();
         } catch (SQLException exception) {
-//            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
             exception.printStackTrace();
         }
     }
@@ -87,7 +87,7 @@ public class Database {
     /**
      * Search the database for all students.
      *
-     * @return ArrayList of students
+     * @return all students
      */
     public static ArrayList<Student> getAllStudents() {
         ArrayList<Student> students = new ArrayList<Student>();
@@ -119,11 +119,12 @@ public class Database {
      * Inserts a student into the database.
      *
      * @param student the student to insert
-     * @return        the id of the student in the database
+     * @return the id of the student in the database
      */
     public static int insertStudent(Student student) {
-        String query = "INSERT INTO students (student_name)"
-                + "         VALUES(?)";
+        String query =
+                "   INSERT INTO students (student_name)"
+                + " VALUES(?)";
 
         Connection conn = connect();
 
@@ -144,11 +145,46 @@ public class Database {
         return 0;
     }
 
+    /**
+     * Change a student's name in the database.
+     *
+     * @param student the student whose name has changed
+     * @param newName the student's new name
+     */
+    public static void editStudentName(Student student, String newName) {
+        String query =
+                "   UPDATE students"
+                + " SET student_name = ?"
+                + " WHERE id = ?";
+
+        Connection conn = connect();
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, newName);
+            pstmt.setInt(2, student.id);
+            pstmt.executeUpdate();
+
+            conn.close();
+        } catch (SQLException exception) {
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+            exception.printStackTrace();
+        }
+    }
+
+    /**
+     * Remove all assignments from a student in a class.
+     * This method will be called when updating a student's marks,
+     * to overwrite all data.
+     *
+     * @param student the student who the assignments belong to
+     * @param c       the class that the student and assignments are in
+     */
     public static void removeStudentClassAssignments(Student student, Class c) {
         String query =
                 "   DELETE FROM assignments"
-                + "     WHERE student_id = ?"
-                + "     AND class_id = ?";
+                + " WHERE student_id = ?"
+                + " AND class_id = ?";
 
         Connection conn = connect();
 
@@ -207,14 +243,14 @@ public class Database {
      * Get all assignments of a student.
      *
      * @param student the student that the assignments belong to
-     * @return ArrayList of the student's assignments
+     * @return all the student's assignments
      */
     public static ArrayList<HashMap<String, Object>> getStudentAssignments(Student student) {
         ArrayList<HashMap<String, Object>> assignments = new ArrayList<HashMap<String, Object>>();
 
         String query =
                 "   SELECT * FROM assignments"
-                + "     WHERE student_id = ?";
+                + " WHERE student_id = ?";
 
         Connection conn = connect();
 
@@ -249,23 +285,23 @@ public class Database {
      * Find and return all the students in a class.
      *
      * @param c the class that the students are in
-     * @return ArrayList of the students in the class
+     * @return all the students in the class
      */
     public static ArrayList<Student> getStudentsFromClass(Class c) {
         ArrayList<Student> students = new ArrayList<Student>();
 
         String getAssociationQuery =
                 "   SELECT * FROM associate_student_class"
-                + "     WHERE class_id = ?";
+                + " WHERE class_id = ?";
 
         String getStudentQuery =
                 "   SELECT * FROM students"
-                + "     WHERE id = ?";
+                + " WHERE id = ?";
 
         String getAssignmentQuery =
                 "   SELECT * FROM assignments"
-                + "     WHERE student_id = ?"
-                + "     AND class_id = ?";
+                + " WHERE student_id = ?"
+                + " AND class_id = ?";
 
         Connection conn = connect();
 
@@ -317,6 +353,11 @@ public class Database {
         return null;
     }
 
+    /**
+     * Get all classes inthe database.
+     *
+     * @return all the classes
+     */
     public static ArrayList<Class> getAllClasses() {
         ArrayList<Class> classes = new ArrayList<Class>();
         String selectClassQuery = "SELECT * FROM classes";
@@ -349,34 +390,13 @@ public class Database {
     /**
      * Insert an existing student into an existing class.
      *
-     * @param s the student to insert into the class
-     * @param c the class that the student will be inserted into
+     * @param s the student to insert
+     * @param c the class to insert the student into
      */
     public static void associateStudentClass(Student s, Class c) {
         String query =
                 "   INSERT INTO associate_student_class (student_id, class_id)"
-                + "     VALUES (?,?)";
-
-        Connection conn = connect();
-
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, s.id);
-            pstmt.setInt(2, c.id);
-            pstmt.executeUpdate();
-
-            conn.close();
-        } catch (SQLException exception) {
-            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
-            exception.printStackTrace();
-        }
-    }
-
-    public static void unassociateStudentClass(Student s, Class c) {
-        String query =
-                "   DELETE FROM associate_student_class"
-                + "     WHERE student_id = ?"
-                + "     AND class_id = ?";
+                + " VALUES (?,?)";
 
         Connection conn = connect();
 
@@ -394,6 +414,42 @@ public class Database {
     }
 
     /**
+     * Remove a student from a class.
+     *
+     * @param s the student to remove
+     * @param c the class to remove the student from
+     */
+    public static void unassociateStudentClass(Student s, Class c) {
+        String unassociateStudentClassQuery =
+                "   DELETE FROM associate_student_class"
+                + " WHERE student_id = ?"
+                + " AND class_id = ?";
+
+        String deleteAssignmentsQuery =
+                "   DELETE FROM assignments"
+                + " WHERE student_id = ?"
+                + " AND class_id = ?";
+
+        Connection conn = connect();
+
+        try {
+            PreparedStatement unassociateStudentClassPstmt = conn.prepareStatement(unassociateStudentClassQuery);
+            PreparedStatement deleteAssignmentsPstmt = conn.prepareStatement(deleteAssignmentsQuery);
+            unassociateStudentClassPstmt.setInt(1, s.id);
+            unassociateStudentClassPstmt.setInt(2, c.id);
+            unassociateStudentClassPstmt.executeUpdate();
+            deleteAssignmentsPstmt.setInt(1, s.id);
+            deleteAssignmentsPstmt.setInt(2, c.id);
+            deleteAssignmentsPstmt.executeUpdate();
+
+            conn.close();
+        } catch (SQLException exception) {
+            new Alert(Alert.AlertType.ERROR, exception.getMessage()).showAndWait();
+            exception.printStackTrace();
+        }
+    }
+
+    /**
      * Inserts a class into the database.
      *
      * @param c the class to insert
@@ -402,7 +458,7 @@ public class Database {
     public static int insertClass(Class c) {
         String query =
                 "   INSERT INTO classes (class_name)"
-                + "     VALUES (?)";
+                + " VALUES (?)";
 
         Connection conn = connect();
 
@@ -435,22 +491,29 @@ public class Database {
      */
     public static void deleteClass(Class c) {
         String deleteClassQuery =
-            "   DELETE FROM classes"
-            + "     WHERE id = ?";
+                "   DELETE FROM classes"
+                + " WHERE id = ?";
 
         String deleteAssociateStudentClassQuery =
-            "   DELETE FROM associate_student_class"
-            + "     WHERE class_id = ?";
+                "   DELETE FROM associate_student_class"
+                + " WHERE class_id = ?";
+
+        String deleteAssignmentsQuery =
+                "   DELETE FROM assignments"
+                + " WHERE class_id = ?";
 
         Connection conn = connect();
 
         try {
             PreparedStatement deleteClassPstmt = conn.prepareStatement(deleteClassQuery);
             PreparedStatement deleteAssociateStudentClassPstmt = conn.prepareStatement(deleteAssociateStudentClassQuery);
+            PreparedStatement deleteAssignmentsPstmt = conn.prepareStatement(deleteAssignmentsQuery);
             deleteClassPstmt.setInt(1, c.id);
-            deleteAssociateStudentClassPstmt.setInt(1, c.id);
             deleteClassPstmt.executeUpdate();
+            deleteAssociateStudentClassPstmt.setInt(1, c.id);
             deleteAssociateStudentClassPstmt.executeUpdate();
+            deleteAssignmentsPstmt.setInt(1, c.id);
+            deleteAssignmentsPstmt.executeUpdate();
 
             conn.close();
         } catch (SQLException exception) {

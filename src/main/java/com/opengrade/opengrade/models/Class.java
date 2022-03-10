@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Class {
     public int id;
@@ -41,16 +40,19 @@ public class Class {
         this.students.add(newStudent);
     }
 
-    public void editStudentName(Student student, String newName) {
-        student.fullName = newName;
-    }
-
+    /**
+     * Remove a student from the class.
+     *
+     * @param student the student to remove
+     */
     public void removeStudent(Student student) {
         this.students.remove(student);
-        Database.insertClass(this);
+        Database.unassociateStudentClass(student, this);
     }
 
-
+    /**
+     * Remove the class from the database.
+     */
     public void deleteClass() {
         Database.deleteClass(this);
     }
@@ -58,7 +60,7 @@ public class Class {
     /**
      * Open a class in the window.
      *
-     * @param c the class to open
+     * @param c     the class to open
      * @param stage the stage to open the class in
      * @throws IOException
      */
@@ -72,6 +74,11 @@ public class Class {
         controller.setClass(c);
     }
 
+    /**
+     * Class toString() will return the name of the class.
+     *
+     * @return the name of the class
+     */
     @Override
     public String toString() {
         return this.className;

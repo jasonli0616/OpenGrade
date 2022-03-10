@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import java.net.URL?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
@@ -43,6 +39,10 @@
         <VBox GridPane.columnIndex="6" alignment="CENTER">
             <Label text="Weight" styleClass="p"/>
             <ListView fx:id="weightList" id="studentsList"/>
+        </VBox>
+        <VBox GridPane.columnIndex="7" alignment="CENTER">
+            <Label text="Average" styleClass="p"/>
+            <ListView fx:id="averageList" id="studentsList"/>
         </VBox>
     </GridPane>
 

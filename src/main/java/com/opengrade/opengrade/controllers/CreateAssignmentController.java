@@ -1,5 +1,6 @@
 package com.opengrade.opengrade.controllers;
 
+import com.opengrade.opengrade.models.AssignmentAttribute;
 import com.opengrade.opengrade.models.Class;
 import com.opengrade.opengrade.models.Student;
 import javafx.fxml.FXML;
@@ -38,6 +39,9 @@ public class CreateAssignmentController {
     @FXML
     private TextField applicationMarkInput;
 
+    /**
+     * Get grades from the window input, and create the assignment for the student.
+     */
     @FXML
     protected void handleInputGrades() {
         try {
@@ -61,7 +65,7 @@ public class CreateAssignmentController {
             else applicationMark = Double.parseDouble(applicationMarkInput.getText());
 
             // Make sure marks are valid entries
-            if (!markIsValid(knowledgeMark) || !markIsValid(thinkingMark) || !markIsValid(communicationMark) || !markIsValid(applicationMark)) {
+            if (!AssignmentAttribute.markIsValid(knowledgeMark) || !AssignmentAttribute.markIsValid(thinkingMark) || !AssignmentAttribute.markIsValid(communicationMark) || !AssignmentAttribute.markIsValid(applicationMark) || !AssignmentAttribute.markIsValid((assignmentWeight))) {
                 throw new NumberFormatException("Out of bounds");
             }
 
@@ -69,12 +73,8 @@ public class CreateAssignmentController {
 
             ((Stage) this.title.getScene().getWindow()).close();
         } catch (NumberFormatException exception) {
-            new Alert(Alert.AlertType.ERROR, "Please input numbers only, or leave blank.").showAndWait();
+            new Alert(Alert.AlertType.ERROR, "Please enter numbers between 0 - 100, or leave blank.").showAndWait();
         }
-    }
-
-    private boolean markIsValid(double mark) {
-        return (mark >= -1 && mark <= 100);
     }
 
     /**

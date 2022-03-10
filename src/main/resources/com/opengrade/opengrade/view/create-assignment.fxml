@@ -2,12 +2,11 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import java.net.URL?>
 <VBox xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.opengrade.opengrade.controllers.CreateAssignmentController"
-            id="body" alignment="TOP_CENTER">
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.opengrade.opengrade.controllers.CreateAssignmentController"
+      id="body" alignment="TOP_CENTER">
     <stylesheets>
         <URL value="@../css/main.css"/>
         <URL value="@../css/create-assignment.css"/>

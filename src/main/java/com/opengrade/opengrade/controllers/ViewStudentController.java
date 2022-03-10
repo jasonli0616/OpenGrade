@@ -44,6 +44,9 @@ public class ViewStudentController {
     @FXML
     private ListView<String> weightList;
 
+    @FXML
+    private ListView<String> averageList;
+
     /**
      * Show the lists of student assignments on the screen.
      */
@@ -56,6 +59,7 @@ public class ViewStudentController {
         communicationList.getItems().clear();
         applicationList.getItems().clear();
         weightList.getItems().clear();
+        averageList.getItems().clear();
 
         for (HashMap<String, Object> assignment : this.student.assignments) {
 
@@ -65,15 +69,18 @@ public class ViewStudentController {
             double thinkingMark = (Double) assignment.get(AssignmentAttribute.THINKING_MARK.attribute);
             double communicationMark = (Double) assignment.get(AssignmentAttribute.COMMUNICATION_MARK.attribute);
             double applicationMark = (Double) assignment.get(AssignmentAttribute.APPLICATION_MARK.attribute);
-
+            double averageMark = Student.getAverage(knowledgeMark, thinkingMark, communicationMark, applicationMark);
 
             knowledgeList.getItems().add(knowledgeMark == -1 ? "-" : String.format("%.2f", knowledgeMark));
             thinkingList.getItems().add(thinkingMark == -1 ? "-" : String.format("%.2f", thinkingMark));
             communicationList.getItems().add(communicationMark == -1 ? "-" : String.format("%.2f", communicationMark));
             applicationList.getItems().add(applicationMark == -1 ? "-" : String.format("%.2f", applicationMark));
+            averageList.getItems().add(averageMark == -1 ? "-" : String.format("%.2f", averageMark));
 
             weightList.getItems().add(String.format("%.2f", (Double) assignment.get(AssignmentAttribute.WEIGHT.attribute)));
         }
+
+        // Make lists editable
 
         assignmentList.setEditable(true);
         knowledgeList.setEditable(true);
@@ -91,6 +98,9 @@ public class ViewStudentController {
 
     }
 
+    /**
+     * Get all grades from the screen, and overwrite database grades data.
+     */
     @FXML
     protected void updateGrades() {
         ArrayList<HashMap<String, Object>> assignments = new ArrayList<HashMap<String, Object>>();
@@ -119,14 +129,16 @@ public class ViewStudentController {
             }
 
             try {
-                double knowledgeMark = knowledgeMarkString.equals("-") ? -1 : Double.parseDouble(knowledgeMarkString);
-                double thinkingMark = thinkingMarkString.equals("-") ? -1 : Double.parseDouble(thinkingMarkString);
-                double communicationMark = communicationMarkString.equals("-") ? -1 : Double.parseDouble(communicationMarkString);
-                double applicationMark = applicationMarkString.equals("-") ? -1 : Double.parseDouble(applicationMarkString);
+                // Get marks from view inputs
+                // If mark is "-" or blank, ignore
+                double knowledgeMark = knowledgeMarkString.equals("-") || knowledgeMarkList.isEmpty() ? -1 : Double.parseDouble(knowledgeMarkString);
+                double thinkingMark = thinkingMarkString.equals("-") || thinkingMarkList.isEmpty() ? -1 : Double.parseDouble(thinkingMarkString);
+                double communicationMark = communicationMarkString.equals("-") || communicationMarkList.isEmpty() ? -1 : Double.parseDouble(communicationMarkString);
+                double applicationMark = applicationMarkString.equals("-") || applicationMarkString.isEmpty() ? -1 : Double.parseDouble(applicationMarkString);
                 double assignmentWeight = Double.parseDouble(weightString);
 
                 // Make sure marks are valid entries
-                if (!markIsValid(knowledgeMark) || !markIsValid(thinkingMark) || !markIsValid(communicationMark) || !markIsValid(applicationMark)) {
+                if (!AssignmentAttribute.markIsValid(knowledgeMark) || !AssignmentAttribute.markIsValid(thinkingMark) || !AssignmentAttribute.markIsValid(communicationMark) || !AssignmentAttribute.markIsValid(applicationMark)) {
                     throw new NumberFormatException("Out of bounds");
                 }
 
@@ -184,7 +196,7 @@ public class ViewStudentController {
             // If name is given, change name
             Optional<String> result = askStudentName.showAndWait();
             if (result.isPresent()) {
-                this.c.editStudentName(this.student, result.get());
+                this.student.changeName(result.get());
 
                 this.title.setText(String.format("%s - %s", result.get(), c.className));
             }
@@ -199,8 +211,7 @@ public class ViewStudentController {
     @FXML
     protected void removeFromClass() {
         try {
-            this.c.students.remove(this.student);
-            Database.unassociateStudentClass(this.student, this.c);
+            this.c.removeStudent(this.student);
             ((Stage) title.getScene().getWindow()).close();
 
         } catch (InvalidParameterException exception) {
@@ -220,16 +231,21 @@ public class ViewStudentController {
         this.showLists();
     }
 
-    private boolean markIsValid(double mark) {
-        return (mark >= -1 && mark <= 100);
-    }
-
+    /**
+     * Puts components to the window/edit components on the window
+     */
     private void drawWindow() {
         this.title.setText(String.format("%s - %s", student.fullName, c.className));
 
         this.showLists();
     }
 
+    /**
+     * Set the student and class for the window
+     *
+     * @param s the student to set
+     * @param c the class to set
+     */
     public void setStudent(Student s, Class c) {
         this.student = s;
         this.c = c;
