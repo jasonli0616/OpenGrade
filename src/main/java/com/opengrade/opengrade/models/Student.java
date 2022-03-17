@@ -77,7 +77,7 @@ public class Student {
                 double assignmentWeight = (double) assignment.get(AssignmentAttribute.WEIGHT.attribute);
 
                 // Get mark
-                if ((double) assignment.get(strand.attribute) > 0) {
+                if ((double) assignment.get(strand.attribute) >= 0) {
                     double assignmentStrand = (double) assignment.get(strand.attribute);
                     average = assignmentStrand * assignmentWeight;
                 }
